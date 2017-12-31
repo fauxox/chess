@@ -13,8 +13,6 @@ public class ChessApp {
 		jv.addBoardListener(jc);
 		jv.setSize(600, 600);
 		jv.setVisible(true);
-		
-		model.setChessPiece(0, 0, model.getChessPiece(0, 1));
 	}
 	
 }
