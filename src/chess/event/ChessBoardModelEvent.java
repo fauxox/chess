@@ -1,6 +1,6 @@
-package mvc.event;
+package chess.event;
 
-import mvc.ChessPiece;
+import chess.model.ChessPiece;
 
 public class ChessBoardModelEvent {
 

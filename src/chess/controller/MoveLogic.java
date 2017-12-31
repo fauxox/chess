@@ -1,4 +1,7 @@
-package mvc;
+package chess.controller;
+
+import chess.model.ChessBoardModel;
+import chess.model.ChessPiece;
 
 public class MoveLogic {
 

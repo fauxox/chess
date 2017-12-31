@@ -1,4 +1,4 @@
-package mvc;
+package chess.view;
 
 import java.awt.GridLayout;
 import java.awt.event.ActionListener;
@@ -7,14 +7,16 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import mvc.event.ChessBoardModelEvent;
-import mvc.event.ChessBoardModelListener;
+import chess.event.ChessBoardModelEvent;
+import chess.event.ChessBoardModelListener;
+import chess.model.ChessBoardModel;
+import chess.model.ChessPiece;
 
 public class ChessBoardView extends JFrame implements ChessBoardModelListener{
 	
 	private JButton[][] buttons;
 	
-	ChessBoardView(String appName, ChessBoardModel model){
+	public ChessBoardView(String appName, ChessBoardModel model){
 		super(appName);
 		model.addChessBoardModelListener(this);
 		JPanel buttonPanel = new JPanel();

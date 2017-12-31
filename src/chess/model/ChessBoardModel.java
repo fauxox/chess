@@ -1,11 +1,11 @@
-package mvc;
+package chess.model;
 
 import java.util.ArrayList;
 
-import mvc.ChessPiece.ChessPieceType;
-import mvc.ChessPiece.ColorType;
-import mvc.event.ChessBoardModelEvent;
-import mvc.event.ChessBoardModelListener;
+import chess.event.ChessBoardModelEvent;
+import chess.event.ChessBoardModelListener;
+import chess.model.ChessPiece.ChessPieceType;
+import chess.model.ChessPiece.ColorType;
 
 public class ChessBoardModel {
 	

@@ -1,4 +1,8 @@
-package mvc;
+package chess;
+
+import chess.controller.ChessBoardController;
+import chess.model.ChessBoardModel;
+import chess.view.ChessBoardView;
 
 public class ChessApp {
 

@@ -1,4 +1,4 @@
-package mvc;
+package chess.model;
 
 public class ChessPiece {
 

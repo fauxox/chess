@@ -1,4 +1,4 @@
-package mvc.event;
+package chess.event;
 
 public interface ChessBoardModelListener {
 
