@@ -2,35 +2,32 @@ package chess.model;
 
 public class ChessPiece {
 
-	public enum ChessPieceType {King, Queen, Bishop, Knight, Rook, Pawn, None }
-	
-	public enum ColorType {Black, White, None}
-	
-	private ChessPieceType cpt;
-	private ColorType ct;
-	
-	ChessPiece(ChessPieceType cpt, ColorType ct){
-		this.cpt = cpt;
-		this.ct = ct;
+	public enum ChessPieceType {
+		King, Queen, Bishop, Knight, Rook, Pawn
 	}
 
-	public ChessPieceType getCpt() {
+	private ChessPieceType cpt;
+	private boolean isBlack;
+
+	ChessPiece(ChessPieceType cpt, boolean isBlack) {
+		this.cpt = cpt;
+		this.isBlack = isBlack;
+	}
+
+	public ChessPieceType getChessPieceType() {
 		return cpt;
 	}
 
-	public void setCpt(ChessPieceType cpt) {
+	public void setChessPieceType(ChessPieceType cpt) {
 		this.cpt = cpt;
 	}
 
-	public ColorType getCt() {
-		return ct;
+	public boolean isBlack() {
+		return isBlack;
 	}
 
-	public void setCt(ColorType ct) {
-		this.ct = ct;
+	public void setBlack(boolean isBlack) {
+		this.isBlack = isBlack;
 	}
-	
-	public String toString() {
-		return ct.toString()+":"+cpt.toString();
-	}
+
 }

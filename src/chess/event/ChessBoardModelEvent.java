@@ -1,17 +1,17 @@
 package chess.event;
 
-import chess.model.ChessPiece;
+import chess.model.ChessBoardSquare;
 
 public class ChessBoardModelEvent {
 
 	private int x, y;
-	
-	private ChessPiece cp;
-	
-	public ChessBoardModelEvent(int x, int y, ChessPiece cp){
+
+	private ChessBoardSquare chessBoardSquare;
+
+	public ChessBoardModelEvent(int x, int y, ChessBoardSquare c) {
 		this.x = x;
 		this.y = y;
-		this.cp = cp;
+		this.chessBoardSquare = c;
 	}
 
 	public int getX() {
@@ -30,12 +30,12 @@ public class ChessBoardModelEvent {
 		this.y = y;
 	}
 
-	public ChessPiece getCp() {
-		return cp;
+	public ChessBoardSquare getChessBoardSquare() {
+		return chessBoardSquare;
 	}
 
-	public void setCp(ChessPiece cp) {
-		this.cp = cp;
+	public void setChessBoardSquare(ChessBoardSquare chessBoardSquare) {
+		this.chessBoardSquare = chessBoardSquare;
 	}
-	
+
 }

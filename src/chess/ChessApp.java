@@ -8,7 +8,7 @@ public class ChessApp {
 
 	public static void main(String[] args) {
 		ChessBoardModel model = new ChessBoardModel();
-		ChessBoardController jc = new ChessBoardController();
+		ChessBoardController jc = new ChessBoardController(model);
 		ChessBoardView jv = new ChessBoardView("My App", model);
 		jv.addBoardListener(jc);
 		jv.setSize(600, 600);
