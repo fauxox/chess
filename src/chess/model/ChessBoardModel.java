@@ -12,6 +12,9 @@ public class ChessBoardModel {
 
 	private ChessBoardSquare[][] board;
 
+	// true means it's black's turn
+	boolean turn = true;
+
 	public ChessBoardModel() {
 		listeners = new ArrayList<ChessBoardModelListener>();
 
@@ -49,6 +52,32 @@ public class ChessBoardModel {
 		board[7][7] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Rook, false));
 	}
 
+	/**
+	 * There is no setter for turn; the way to change it is to call the move method.
+	 * 
+	 * @return
+	 */
+	public boolean getTurn() {
+		return turn;
+	}
+
+	/**
+	 * There is no checking here for whether the move is valid. This simply remove
+	 * the piece, if any, at sourceX, sourceY and places it at targetX, targetY. Any
+	 * logic for checking moves should go in a controller. This class is simply a
+	 * model for tracking state.
+	 * 
+	 * @param sourceX
+	 * @param sourceY
+	 * @param targetX
+	 * @param targetY
+	 */
+	public void move(int sourceX, int sourceY, int targetX, int targetY) {
+		setChessPiece(targetX, targetY, board[sourceX][sourceY].getChessPiece());
+		setChessPiece(sourceX, sourceY, null);
+		turn = !turn;
+	}
+
 	public ChessPiece getChessPiece(int i, int j) {
 		return board[i][j].getChessPiece();
 	}
@@ -79,7 +108,7 @@ public class ChessBoardModel {
 		}
 	}
 
-	public void highlight(int i, int j) {
+	public void setHighlight(int i, int j) {
 		board[i][j].setHighlighted(true);
 		fireChessBoardChangedEvent(i, j, board[i][j]);
 	}
@@ -87,7 +116,7 @@ public class ChessBoardModel {
 	public void setHighlight(ArrayList<BoardCoordinate> selections) {
 		for (int i = 0, n = selections.size(); i < n; i++) {
 			BoardCoordinate bc = selections.get(i);
-			highlight(bc.getX(), bc.getY());
+			setHighlight(bc.getX(), bc.getY());
 		}
 	}
 

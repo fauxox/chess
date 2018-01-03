@@ -30,8 +30,7 @@ import chess.model.ChessPiece;
 public class ChessBoardView extends JFrame implements ChessBoardModelListener {
 
 	private ChessButton[][] buttons;
-	private ImageIcon blackRook, blackKnight, blackBishop, blackKing, blackQueen, blackPawn, whiteRook, whiteKnight,
-			whiteBishop, whiteKing, whiteQueen, whitePawn;
+
 	private Color defaultBackgroundColor;
 
 	public ChessBoardView(String appName, ChessBoardModel model) {
@@ -43,7 +42,6 @@ public class ChessBoardView extends JFrame implements ChessBoardModelListener {
 		// Making a button group and adding all the buttons to it just means that only
 		// one button can be toggled in that group.
 		ButtonGroup bg = new ButtonGroup();
-		createIcons();
 
 		// DragMouseAdapter dma = new DragMouseAdapter();
 		//
@@ -65,52 +63,6 @@ public class ChessBoardView extends JFrame implements ChessBoardModelListener {
 		super.getContentPane().add(buttonPanel);
 		super.setDefaultLookAndFeelDecorated(true);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-	}
-
-	/**
-	 * Create all of the image icons that will be used on the buttons. You usually
-	 * don't want to hard code stuff like this. Other ways to do this would be to
-	 * create a properties file, so that someone would swap in other images if they
-	 * wanted to. Since this is such a simple, small app I'll just hard code this
-	 * icon creation for now, but before we're done, if you want, we can go ahead
-	 * and change this so it's reading them in from a properties file. It's good to
-	 * know how to use properties files.
-	 */
-	private void createIcons() {
-		BufferedImage img = null;
-		try {
-			// The path is relative to the root of the classpath (in this case the build
-			// path in the IDE)
-			img = ImageIO.read(new File("img/black_rook.png"));
-			blackRook = new ImageIcon(img);
-			img = ImageIO.read(new File("img/white_rook.png"));
-			whiteRook = new ImageIcon(img);
-			img = ImageIO.read(new File("img/black_knight.png"));
-			blackKnight = new ImageIcon(img);
-			img = ImageIO.read(new File("img/white_knight.png"));
-			whiteKnight = new ImageIcon(img);
-			img = ImageIO.read(new File("img/black_bishop.png"));
-			blackBishop = new ImageIcon(img);
-			img = ImageIO.read(new File("img/white_bishop.png"));
-			whiteBishop = new ImageIcon(img);
-			img = ImageIO.read(new File("img/black_queen.png"));
-			blackQueen = new ImageIcon(img);
-			img = ImageIO.read(new File("img/white_queen.png"));
-			whiteQueen = new ImageIcon(img);
-			img = ImageIO.read(new File("img/black_king.png"));
-			blackKing = new ImageIcon(img);
-			img = ImageIO.read(new File("img/white_king.png"));
-			whiteKing = new ImageIcon(img);
-			img = ImageIO.read(new File("img/black_pawn.png"));
-			blackPawn = new ImageIcon(img);
-			img = ImageIO.read(new File("img/white_pawn.png"));
-			whitePawn = new ImageIcon(img);
-		} catch (IOException e) {
-			// TODO we can talk about loggers and logging and how you might want to respod
-			// to different types of errors, e.g. ones that are bad but your app can keep
-			// going, vs ones that are catastrophic.
-			System.out.println(e);
-		}
 	}
 
 	/**
@@ -136,55 +88,12 @@ public class ChessBoardView extends JFrame implements ChessBoardModelListener {
 		if (piece == null) {
 			// set the icon to null so nothing appears
 			buttons[i][j].setIcon(null);
-			// return so you don't go through the switch statement - otherwise you'll call
-			// piece.getCpt() when piece is null so would throw a null pointer exception
-			return;
+		}
+		// otherwise update the icon
+		else {
+			IconManager.getIconManager().updateIcon(buttons[i][j], piece);
 		}
 
-		// giant switch for setting the icon of the button
-		if (piece.isBlack()) {
-			switch (piece.getChessPieceType()) {
-			case Rook:
-				buttons[i][j].setIcon(blackRook);
-				break;
-			case Knight:
-				buttons[i][j].setIcon(blackKnight);
-				break;
-			case Bishop:
-				buttons[i][j].setIcon(blackBishop);
-				break;
-			case King:
-				buttons[i][j].setIcon(blackKing);
-				break;
-			case Queen:
-				buttons[i][j].setIcon(blackQueen);
-				break;
-			case Pawn:
-				buttons[i][j].setIcon(blackPawn);
-				break;
-			}
-		} else {
-			switch (piece.getChessPieceType()) {
-			case Rook:
-				buttons[i][j].setIcon(whiteRook);
-				break;
-			case Knight:
-				buttons[i][j].setIcon(whiteKnight);
-				break;
-			case Bishop:
-				buttons[i][j].setIcon(whiteBishop);
-				break;
-			case King:
-				buttons[i][j].setIcon(whiteKing);
-				break;
-			case Queen:
-				buttons[i][j].setIcon(whiteQueen);
-				break;
-			case Pawn:
-				buttons[i][j].setIcon(whitePawn);
-				break;
-			}
-		}
 	}
 
 	public void addBoardListener(ActionListener bl) {

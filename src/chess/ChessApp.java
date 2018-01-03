@@ -14,5 +14,5 @@ public class ChessApp {
 		jv.setSize(600, 600);
 		jv.setVisible(true);
 	}
-	
+
 }

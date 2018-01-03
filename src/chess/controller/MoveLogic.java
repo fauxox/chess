@@ -154,4 +154,9 @@ public class MoveLogic {
 		// TODO: placeholder, replace with actual moves
 		return new ArrayList<BoardCoordinate>(0);
 	}
+
+	public static boolean canMove(ChessBoardModel model, int sourceX, int sourceY, int targetX, int targetY) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }
