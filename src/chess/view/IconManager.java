@@ -7,6 +7,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
+import chess.ChessProperties;
 import chess.model.ChessPiece;
 
 /**
@@ -23,7 +24,7 @@ import chess.model.ChessPiece;
  * create too many of them - i.e. to minimize memory footprint. Since they're
  * read only anyway everyone can just grab their icons from this class.
  * 
- * @author psye
+ * @author John T. Langton
  *
  */
 public class IconManager {
@@ -42,8 +43,11 @@ public class IconManager {
 	 * Because the constructor is private, it means that it can only be called
 	 * internally to this class.
 	 */
-	private IconManager() {
-		createIcons();
+	private IconManager(String imagePath) {
+		// note I don't set a local variable because I only use this once. In general
+		// try not to keep stuff around unless you really need it. Try not to make
+		// global variables.
+		createIcons(imagePath);
 	}
 
 	/**
@@ -55,34 +59,35 @@ public class IconManager {
 	 * and change this so it's reading them in from a properties file. It's good to
 	 * know how to use properties files.
 	 */
-	private void createIcons() {
+	private void createIcons(String imagePath) {
 		BufferedImage img = null;
 		try {
 			// The path is relative to the root of the classpath (in this case the build
-			// path in the IDE)
-			img = ImageIO.read(new File("img/black_rook.png"));
+			// path in the IDE). Normally the complete paths here would be specified in a
+			// properties file then loaded in at startup
+			img = ImageIO.read(new File(imagePath + "black_rook.png"));
 			blackRook = new ImageIcon(img);
-			img = ImageIO.read(new File("img/white_rook.png"));
+			img = ImageIO.read(new File(imagePath + "white_rook.png"));
 			whiteRook = new ImageIcon(img);
-			img = ImageIO.read(new File("img/black_knight.png"));
+			img = ImageIO.read(new File(imagePath + "black_knight.png"));
 			blackKnight = new ImageIcon(img);
-			img = ImageIO.read(new File("img/white_knight.png"));
+			img = ImageIO.read(new File(imagePath + "white_knight.png"));
 			whiteKnight = new ImageIcon(img);
-			img = ImageIO.read(new File("img/black_bishop.png"));
+			img = ImageIO.read(new File(imagePath + "black_bishop.png"));
 			blackBishop = new ImageIcon(img);
-			img = ImageIO.read(new File("img/white_bishop.png"));
+			img = ImageIO.read(new File(imagePath + "white_bishop.png"));
 			whiteBishop = new ImageIcon(img);
-			img = ImageIO.read(new File("img/black_queen.png"));
+			img = ImageIO.read(new File(imagePath + "black_queen.png"));
 			blackQueen = new ImageIcon(img);
-			img = ImageIO.read(new File("img/white_queen.png"));
+			img = ImageIO.read(new File(imagePath + "white_queen.png"));
 			whiteQueen = new ImageIcon(img);
-			img = ImageIO.read(new File("img/black_king.png"));
+			img = ImageIO.read(new File(imagePath + "black_king.png"));
 			blackKing = new ImageIcon(img);
-			img = ImageIO.read(new File("img/white_king.png"));
+			img = ImageIO.read(new File(imagePath + "white_king.png"));
 			whiteKing = new ImageIcon(img);
-			img = ImageIO.read(new File("img/black_pawn.png"));
+			img = ImageIO.read(new File(imagePath + "black_pawn.png"));
 			blackPawn = new ImageIcon(img);
-			img = ImageIO.read(new File("img/white_pawn.png"));
+			img = ImageIO.read(new File(imagePath + "white_pawn.png"));
 			whitePawn = new ImageIcon(img);
 		} catch (IOException e) {
 			// TODO we can talk about loggers and logging and how you might want to respod
@@ -140,8 +145,22 @@ public class IconManager {
 	}
 
 	public static IconManager getIconManager() {
+		return getIconManager(ChessProperties.imagePathDefaultValue);
+	}
+
+	/**
+	 * This constructor is so that a master app can provide the path property for
+	 * where the images are on first invocation. There's tons of other options for
+	 * how to manage properties across an app including the Java preferences API.
+	 * 
+	 * @param imagePath
+	 * @return
+	 */
+	public static IconManager getIconManager(String imagePath) {
 		if (iconManager == null) {
-			iconManager = new IconManager();
+			// We could load this in from a properties
+			// manager as well, but since it's one thing I won't.
+			iconManager = new IconManager(imagePath);
 		}
 		return iconManager;
 	}

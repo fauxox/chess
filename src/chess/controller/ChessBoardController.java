@@ -7,14 +7,10 @@ import chess.model.ChessBoardModel;
 import chess.model.ChessPiece;
 import chess.view.ChessButton;
 
-public class ChessBoardController implements ActionListener {
+public class ChessBoardController implements ActionListener, ChessBoardControllerINF {
 
 	private ChessBoardModel model;
 	private boolean showMoves = false;
-
-	// normally I'd say hanging onto a view component is
-	// bad, but this is a simple hack and not too egregious
-	private ChessButton lastToggle;
 
 	public ChessBoardController(ChessBoardModel model) {
 		this.model = model;
@@ -22,9 +18,59 @@ public class ChessBoardController implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// The only thing we'll get ActionEvents from
-		// at this point are buttons on the board
-		ChessButton targetButton = (ChessButton) e.getSource();
+
+	}
+
+	/**
+	 * This method differs from the move in the model. This is where the logic
+	 * validates moves whereas the logic in the model simply updates state. It's a
+	 * bit subjective where to put the cutoff for logic in an MVC design pattern,
+	 * but generally the model is for storing state, not really business logic
+	 * outside of that.
+	 * 
+	 * @param sourceX
+	 * @param sourceY
+	 * @param targetX
+	 * @param targetY
+	 */
+	public void move(ChessButton chessButton, int sourceX, int sourceY, int targetX, int targetY) {
+		if (MoveLogic.canMove(model, sourceX, sourceY, targetX, targetY)) {
+			model.move(sourceX, sourceY, targetX, targetY);
+		}
+		// in either case we'll unselect the button and set the lastToggle to null
+		chessButton.setSelected(false);
+	}
+
+	private void showMoves(ChessButton chessButton) {
+		model.clearHighlight();
+		if (chessButton != null) {
+			model.setHighlight(MoveLogic.getMoves(model, chessButton.getI(), chessButton.getJ()));
+		}
+	}
+
+	@Override
+	public void showMoves(boolean flag) {
+		this.showMoves = flag;
+	}
+
+	/**
+	 * You'll see this sometimes where a controller simply passes through a method
+	 * call to the model. Because of that, some folks miss the point of the
+	 * separation of MVC components, and then they'll start just making everything a
+	 * pass through method invocation and have all the logic in the model. THat's
+	 * not quite right. Try to avoid against that. You'll notice in here there's
+	 * quite a bit of business logic that we don't necessarily want the model
+	 * knowing about, such as whether the user was actually trying to make a move or
+	 * if they were just selecting a different piece of theirs. It's arguable
+	 * whether the model should be checking if an actual move is valid though. In
+	 * this case I'm doing that in this controller. A model, however, is generally
+	 * mainly for storing state.
+	 */
+	public void newGame() {
+		model.newGame();
+	}
+
+	public void selectionChanged(ChessButton lastToggle, ChessButton targetButton) {
 		int newX = targetButton.getI();
 		int newY = targetButton.getJ();
 		ChessPiece targetPiece = model.getChessBoardSquare(newX, newY).getChessPiece();
@@ -47,7 +93,6 @@ public class ChessBoardController implements ActionListener {
 			// otherwise the piece is not null and it's one of your pieces
 			else {
 				// so track it and show moves if necessary
-				updateToggle(targetButton);
 				return;
 			}
 		}
@@ -73,7 +118,6 @@ public class ChessBoardController implements ActionListener {
 		}
 		// if you're just selecting another one of your own pieces
 		else if (targetPiece.isBlack() == model.getTurn()) {
-			updateToggle(targetButton);
 			return;
 		}
 
@@ -84,41 +128,7 @@ public class ChessBoardController implements ActionListener {
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
-	}
 
-	/**
-	 * This method differs from the move in the model. This is where the logic
-	 * validates moves whereas the logic in the model simply updates state. It's a
-	 * bit subjective where to put the cutoff for logic in an MVC design pattern,
-	 * but generally the model is for storing state, not really business logic
-	 * outside of that.
-	 * 
-	 * @param sourceX
-	 * @param sourceY
-	 * @param targetX
-	 * @param targetY
-	 */
-	public void move(ChessButton chessButton, int sourceX, int sourceY, int targetX, int targetY) {
-		if (MoveLogic.canMove(model, sourceX, sourceY, targetX, targetY)) {
-			model.move(sourceX, sourceY, targetX, targetY);
-		}
-		// in either case we'll unselect the button and set the lastToggle to null
-		chessButton.setSelected(false);
-		updateToggle(null);
-	}
-
-	private void updateToggle(ChessButton chessButton) {
-		this.lastToggle = chessButton;
-		if (showMoves) {
-			showMoves(chessButton);
-		}
-	}
-
-	private void showMoves(ChessButton chessButton) {
-		model.clearHighlight();
-		if (chessButton != null) {
-			model.setHighlight(MoveLogic.getMoves(model, chessButton.getI(), chessButton.getJ()));
-		}
 	}
 
 }

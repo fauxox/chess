@@ -3,7 +3,7 @@ package chess.model;
 /**
  * Super, compact class for holding a coordinate of chess board.
  * 
- * @author psye
+ * @author John T. Langton
  *
  */
 public class BoardCoordinate {

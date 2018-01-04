@@ -155,7 +155,57 @@ public class MoveLogic {
 		return new ArrayList<BoardCoordinate>(0);
 	}
 
+	// Here's main logic for whether a piece can move to a position
+
 	public static boolean canMove(ChessBoardModel model, int sourceX, int sourceY, int targetX, int targetY) {
+		ChessPiece piece = model.getChessPiece(sourceX, sourceY);
+		if (piece == null) {
+			return false;
+		}
+		switch (piece.getChessPieceType()) {
+		case Rook:
+			return canRookMove(model, sourceX, sourceY, targetY, targetY);
+		case Knight:
+			return canKnightMove(model, sourceX, sourceY, targetY, targetY);
+		case Bishop:
+			return canBishopMove(model, sourceX, sourceY, targetY, targetY);
+		case King:
+			return canKingMove(model, sourceX, sourceY, targetY, targetY);
+		case Queen:
+			return canQueenMove(model, sourceX, sourceY, targetY, targetY);
+		case Pawn:
+			return canPawnMove(model, sourceX, sourceY, targetY, targetY);
+		default:
+			return false;
+		}
+	}
+
+	public static boolean canRookMove(ChessBoardModel model, int sourceX, int sourceY, int targetX, int targetY) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public static boolean canKnightMove(ChessBoardModel model, int sourceX, int sourceY, int targetX, int targetY) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public static boolean canBishopMove(ChessBoardModel model, int sourceX, int sourceY, int targetX, int targetY) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public static boolean canKingMove(ChessBoardModel model, int sourceX, int sourceY, int targetX, int targetY) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public static boolean canQueenMove(ChessBoardModel model, int sourceX, int sourceY, int targetX, int targetY) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public static boolean canPawnMove(ChessBoardModel model, int sourceX, int sourceY, int targetX, int targetY) {
 		// TODO Auto-generated method stub
 		return false;
 	}

@@ -12,44 +12,12 @@ public class ChessBoardModel {
 
 	private ChessBoardSquare[][] board;
 
-	// true means it's black's turn
+	// simple turn logic, true = black's turn
 	boolean turn = true;
 
 	public ChessBoardModel() {
 		listeners = new ArrayList<ChessBoardModelListener>();
-
-		board = new ChessBoardSquare[8][8];
-		board[0][0] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Rook, true));
-		board[0][1] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Knight, true));
-		board[0][2] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Bishop, true));
-		board[0][3] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Queen, true));
-		board[0][4] = new ChessBoardSquare(new ChessPiece(ChessPieceType.King, true));
-		board[0][5] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Bishop, true));
-		board[0][6] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Knight, true));
-		board[0][7] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Rook, true));
-
-		for (int i = 0; i < 8; i++) {
-			board[1][i] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Pawn, true));
-		}
-
-		for (int i = 2; i < 6; i++) {
-			for (int j = 0; j < 8; j++) {
-				board[i][j] = new ChessBoardSquare();
-			}
-		}
-
-		for (int i = 0; i < 8; i++) {
-			board[6][i] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Pawn, false));
-		}
-
-		board[7][0] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Rook, false));
-		board[7][1] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Knight, false));
-		board[7][2] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Bishop, false));
-		board[7][3] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Queen, false));
-		board[7][4] = new ChessBoardSquare(new ChessPiece(ChessPieceType.King, false));
-		board[7][5] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Bishop, false));
-		board[7][6] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Knight, false));
-		board[7][7] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Rook, false));
+		initBoard();
 	}
 
 	/**
@@ -59,6 +27,14 @@ public class ChessBoardModel {
 	 */
 	public boolean getTurn() {
 		return turn;
+	}
+
+	public String getTurnString() {
+		if (turn) {
+			return " | Turn : Black";
+		} else {
+			return " | Turn : White";
+		}
 	}
 
 	/**
@@ -76,6 +52,7 @@ public class ChessBoardModel {
 		setChessPiece(targetX, targetY, board[sourceX][sourceY].getChessPiece());
 		setChessPiece(sourceX, sourceY, null);
 		turn = !turn;
+		fireTurnChanged();
 	}
 
 	public ChessPiece getChessPiece(int i, int j) {
@@ -127,6 +104,19 @@ public class ChessBoardModel {
 		}
 	}
 
+	private void fireTurnChanged() {
+		String turnString = getTurnString();
+		for (int k = 0, n = listeners.size(); k < n; k++) {
+			listeners.get(k).turnChanged(turnString);
+		}
+	}
+
+	private void fireBoardReset() {
+		for (int k = 0, n = listeners.size(); k < n; k++) {
+			listeners.get(k).boardReset(this);
+		}
+	}
+
 	public void addChessBoardModelListener(ChessBoardModelListener listener) {
 		listeners.add(listener);
 	}
@@ -134,4 +124,47 @@ public class ChessBoardModel {
 	public boolean removeChessBoardModelListener(ChessBoardModelListener listener) {
 		return listeners.remove(listener);
 	}
+
+	public void initBoard() {
+		board = new ChessBoardSquare[8][8];
+		board[0][0] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Rook, true));
+		board[0][1] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Knight, true));
+		board[0][2] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Bishop, true));
+		board[0][3] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Queen, true));
+		board[0][4] = new ChessBoardSquare(new ChessPiece(ChessPieceType.King, true));
+		board[0][5] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Bishop, true));
+		board[0][6] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Knight, true));
+		board[0][7] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Rook, true));
+
+		for (int i = 0; i < 8; i++) {
+			board[1][i] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Pawn, true));
+		}
+
+		for (int i = 2; i < 6; i++) {
+			for (int j = 0; j < 8; j++) {
+				board[i][j] = new ChessBoardSquare();
+			}
+		}
+
+		for (int i = 0; i < 8; i++) {
+			board[6][i] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Pawn, false));
+		}
+
+		board[7][0] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Rook, false));
+		board[7][1] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Knight, false));
+		board[7][2] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Bishop, false));
+		board[7][3] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Queen, false));
+		board[7][4] = new ChessBoardSquare(new ChessPiece(ChessPieceType.King, false));
+		board[7][5] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Bishop, false));
+		board[7][6] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Knight, false));
+		board[7][7] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Rook, false));
+		// set the turn to black
+		turn = true;
+	}
+
+	public void newGame() {
+		initBoard();
+		fireBoardReset();
+	}
+
 }
