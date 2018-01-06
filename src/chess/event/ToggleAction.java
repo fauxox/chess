@@ -11,7 +11,7 @@ public class ToggleAction extends AbstractAction {
 
 	private ChessBoardControllerINF mover;
 
-	private ChessButton lastToggle;
+	private int lastRow = -1, lastCol = -1;
 
 	public ToggleAction(ChessBoardControllerINF mover) {
 		super();
@@ -21,9 +21,10 @@ public class ToggleAction extends AbstractAction {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		ChessButton chessButton = (ChessButton) e.getSource();
-		//System.out.println("in event and x is " + chessButton.getI() + " and y is " + chessButton.getJ());
-		mover.selectionChanged(lastToggle, chessButton);
-		lastToggle = chessButton;
+		int row = chessButton.getRow(), col = chessButton.getCol();
+		mover.selectionChanged(lastRow, lastCol, row, col);
+		lastRow = row;
+		lastCol = col;
 	}
 
 }

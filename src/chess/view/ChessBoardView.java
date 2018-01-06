@@ -33,17 +33,17 @@ public class ChessBoardView extends JFrame implements ChessBoardModelListener {
 
 	private String defaultFrameTitle;
 
-	private JCheckBoxMenuItem showMoves;
+	private JCheckBoxMenuItem showMovesMenu;
 
-	public ChessBoardView(ChessBoardController controller, ChessBoardModel model, ChessProperties properties,
-			String title) {
+	public ChessBoardView(ChessBoardController controller, ChessBoardModel model, boolean showMoves, String title) {
 		// Doing super() like this invokes the constructor in the super class. The
 		// reason for doing so is so that the super class constructor can do any setup
 		// and variable setting it needs to, otherwise we'd have to do all of that for
 		// ourselves in our constructor here.
-		super(title);
+		super();
 		this.defaultFrameTitle = title;
-		setJMenuBar(createMenuBar(controller, properties));
+		this.setTitle(defaultFrameTitle + model.getTurnString());
+		setJMenuBar(createMenuBar(controller, showMoves));
 		JPanel buttonPanel = createButtonPanel(model, controller);
 		super.getContentPane().add(buttonPanel, BorderLayout.CENTER);
 		model.addChessBoardModelListener(this);
@@ -93,10 +93,10 @@ public class ChessBoardView extends JFrame implements ChessBoardModelListener {
 		return buttonPanel;
 	}
 
-	private JMenuBar createMenuBar(ChessBoardControllerINF mover, ChessProperties properties) {
+	private JMenuBar createMenuBar(ChessBoardControllerINF mover, boolean showMoves) {
 		JMenuBar bar = new JMenuBar();
 		bar.add(createFileMenu(mover));
-		bar.add(createOptionsMenu(mover, properties));
+		bar.add(createOptionsMenu(mover, showMoves));
 		return bar;
 	}
 
@@ -107,15 +107,12 @@ public class ChessBoardView extends JFrame implements ChessBoardModelListener {
 		return fileMenu;
 	}
 
-	private JMenu createOptionsMenu(ChessBoardControllerINF mover, ChessProperties properties) {
+	private JMenu createOptionsMenu(ChessBoardControllerINF mover, boolean showMoves) {
 		JMenu optionsMenu = new JMenu("Options");
-		showMoves = new JCheckBoxMenuItem(new ShowMovesSelectedAction(mover));
-		// the property is text so we have to parse it to an actual boolean
-		boolean showMovesSelected = Boolean.parseBoolean(
-				properties.getProperty(ChessProperties.showMovesKey, ChessProperties.showMovesDefaultValue));
-		showMoves.setSelected(showMovesSelected);
-		mover.setShowMoves(showMovesSelected);
-		optionsMenu.add(showMoves);
+		showMovesMenu = new JCheckBoxMenuItem(new ShowMovesSelectedAction(mover));
+		showMovesMenu.setSelected(showMoves);
+		mover.setShowMoves(showMoves);
+		optionsMenu.add(showMovesMenu);
 		return optionsMenu;
 	}
 
@@ -195,7 +192,7 @@ public class ChessBoardView extends JFrame implements ChessBoardModelListener {
 	 *         selected.
 	 */
 	public boolean isShowMovesSelected() {
-		return showMoves.isSelected();
+		return showMovesMenu.isSelected();
 	}
 
 	// Drag and drop support

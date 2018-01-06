@@ -25,7 +25,7 @@ public class ChessBoardController implements ChessBoardControllerINF {
 	 * @param targetRow
 	 * @param targetCol
 	 */
-	public void move(ChessButton chessButton, int sourceRow, int sourceCol, int targetRow, int targetCol) {
+	public void move(int sourceRow, int sourceCol, int targetRow, int targetCol) {
 		if (MoveLogic.canMove(model, sourceRow, sourceCol, targetRow, targetCol)) {
 			model.move(sourceRow, sourceCol, targetRow, targetCol);
 		}
@@ -64,12 +64,15 @@ public class ChessBoardController implements ChessBoardControllerINF {
 		model.newGame();
 	}
 
-	public void selectionChanged(ChessButton lastToggle, ChessButton targetButton) {
-		int sourceRow = targetButton.getRow();
-		int sourceCol = targetButton.getCol();
-		ChessPiece sourcePiece = model.getChessBoardSquare(sourceRow, sourceCol).getChessPiece();
-		int targetRow = targetButton.getRow();
-		int targetCol = targetButton.getCol();
+	public void selectionChanged(int sourceRow, int sourceCol, int targetRow, int targetCol) {
+		ChessPiece sourcePiece;
+		// if this is the first turn, sourceRow will be -1
+		if (sourceRow < 0) {
+			sourcePiece = null;
+		} else {
+			sourcePiece = model.getChessBoardSquare(sourceRow, sourceCol).getChessPiece();
+		}
+
 		ChessPiece targetPiece = model.getChessBoardSquare(targetRow, targetCol).getChessPiece();
 
 		// if no piece was selected before, or the other players piece was selected
@@ -103,7 +106,10 @@ public class ChessBoardController implements ChessBoardControllerINF {
 		// If they're selecting a blank location or one of the other players pieces
 		// we'll assume they're trying to move there.
 		if (targetPiece == null || targetPiece.isBlack() != model.getTurn()) {
-			move(targetButton, sourceRow, sourceCol, targetRow, targetCol);
+			move(sourceRow, sourceCol, targetRow, targetCol);
+			if (showMoves) {
+				model.clearHighlight();
+			}
 			return;
 		}
 		// if they're just selecting another one of their own pieces

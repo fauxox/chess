@@ -1,5 +1,5 @@
 #---No Comment---
-#Fri Jan 05 20:40:55 EST 2018
+#Sat Jan 06 02:14:28 EST 2018
 appName=Chess
 imagePath=resources/img/
-showMoves=false
+showMoves=true

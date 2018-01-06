@@ -14,7 +14,7 @@ public interface ChessBoardControllerINF {
 
 	public void setShowMoves(boolean flag);
 
-	public void selectionChanged(ChessButton lastToggle, ChessButton chessButton);
+	public void selectionChanged(int lastRow, int lastCol, int targetRow, int targetCol);
 
 	public void newGame();
 

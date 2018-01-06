@@ -87,8 +87,10 @@ public class ChessBoardModel {
 	public void clearHighlight() {
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
-				board[i][j].setHighlighted(false);
-				fireChessBoardChangedEvent(i, j, board[i][j]);
+				if (board[i][j].isHighlighted()) {
+					board[i][j].setHighlighted(false);
+					fireChessBoardChangedEvent(i, j, board[i][j]);
+				}
 			}
 		}
 	}

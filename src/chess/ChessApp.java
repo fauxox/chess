@@ -40,9 +40,11 @@ public class ChessApp implements WindowListener {
 		IconManager.getIconManager(imgPath);
 		ChessBoardModel model = new ChessBoardModel();
 		ChessBoardController controller = new ChessBoardController(model);
-		String title = properties.getProperty(ChessProperties.appNameKey, ChessProperties.appNameDefaultValue)
-				+ model.getTurnString();
-		ChessBoardView jv = new ChessBoardView(controller, model, properties, title);
+		String title = properties.getProperty(ChessProperties.appNameKey, ChessProperties.appNameDefaultValue);
+		// the property is text so we have to parse it to an actual boolean
+		boolean showMoves = Boolean.parseBoolean(
+				properties.getProperty(ChessProperties.showMovesKey, ChessProperties.showMovesDefaultValue));
+		ChessBoardView jv = new ChessBoardView(controller, model, showMoves, title);
 		jv.addWindowListener(this);
 		jv.setSize(600, 600);
 		jv.setVisible(true);
