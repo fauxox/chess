@@ -9,11 +9,17 @@ public class ChessBoardSquare {
 
 	private ChessPiece chessPiece = null;
 
-	public ChessBoardSquare() {
+	private final int row, col;
+
+	public ChessBoardSquare(final int row, final int col) {
+		this.row = row;
+		this.col = col;
 	}
 
-	public ChessBoardSquare(ChessPiece cp) {
+	public ChessBoardSquare(ChessPiece cp, final int row, final int col) {
 		this.chessPiece = cp;
+		this.row = row;
+		this.col = col;
 	}
 
 	public boolean isHighlighted() {
@@ -26,6 +32,14 @@ public class ChessBoardSquare {
 
 	public ChessPiece getChessPiece() {
 		return chessPiece;
+	}
+
+	public int getRow() {
+		return row;
+	}
+
+	public int getCol() {
+		return col;
 	}
 
 	/**

@@ -3,7 +3,6 @@ package chess.event;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
-import javax.swing.JCheckBoxMenuItem;
 
 import chess.controller.ChessBoardControllerINF;
 
@@ -13,6 +12,7 @@ import chess.controller.ChessBoardControllerINF;
  * @author John T. Langton
  *
  */
+@SuppressWarnings("serial")
 public class NewGameAction extends AbstractAction {
 
 	private ChessBoardControllerINF mover;

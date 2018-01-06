@@ -2,7 +2,6 @@ package chess.controller;
 
 import chess.model.ChessBoardModel;
 import chess.model.ChessPiece;
-import chess.view.ChessButton;
 
 public class ChessBoardController implements ChessBoardControllerINF {
 

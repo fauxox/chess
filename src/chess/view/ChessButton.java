@@ -4,6 +4,7 @@ import javax.swing.JToggleButton;
 
 import chess.event.ToggleAction;
 
+@SuppressWarnings("serial")
 public class ChessButton extends JToggleButton {
 
 	private final byte row;

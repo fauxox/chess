@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;
@@ -13,9 +14,9 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
-import chess.ChessProperties;
 import chess.controller.ChessBoardController;
 import chess.controller.ChessBoardControllerINF;
+import chess.event.ChessBoardHighlightEvent;
 import chess.event.ChessBoardModelEvent;
 import chess.event.ChessBoardModelListener;
 import chess.event.NewGameAction;
@@ -25,6 +26,7 @@ import chess.model.ChessBoardModel;
 import chess.model.ChessBoardSquare;
 import chess.model.ChessPiece;
 
+@SuppressWarnings("serial")
 public class ChessBoardView extends JFrame implements ChessBoardModelListener {
 
 	private ChessButton[][] buttons;
@@ -79,6 +81,7 @@ public class ChessBoardView extends JFrame implements ChessBoardModelListener {
 
 		for (int row = 0; row < buttons.length; row++) {
 			for (int col = 0; col < buttons[0].length; col++) {
+				//we could use ChessBoardSquare as a model for each button
 				buttons[row][col] = new ChessButton(toggleAction, (byte) row, (byte) col);
 				updatePosition(row, col, model.getChessBoardSquare(row, col));
 				buttonPanel.add(buttons[row][col]);
@@ -193,6 +196,21 @@ public class ChessBoardView extends JFrame implements ChessBoardModelListener {
 	 */
 	public boolean isShowMovesSelected() {
 		return showMovesMenu.isSelected();
+	}
+
+	@Override
+	public void chessBoardHighlightChanged(ChessBoardHighlightEvent e) {
+		ArrayList<ChessBoardSquare> squares = e.getSquares();
+		for (int i = 0; i < squares.size(); i++) {
+			ChessBoardSquare square = squares.get(i);
+			int row = square.getRow();
+			int col = square.getCol();
+			if (square.isHighlighted()) {
+				buttons[row][col].setBackground(Color.yellow);
+			} else {
+				buttons[row][col].setBackground(defaultBackgroundColor);
+			}
+		}
 	}
 
 	// Drag and drop support

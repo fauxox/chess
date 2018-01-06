@@ -9,6 +9,11 @@ import chess.view.ChessButton;
 
 public class ToggleAction extends AbstractAction {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private ChessBoardControllerINF mover;
 
 	private int lastRow = -1, lastCol = -1;

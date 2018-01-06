@@ -31,36 +31,40 @@ public class ChessApp implements WindowListener {
 	 * properties, and then the properties that were set by the user. This way you
 	 * can restore defaults, etc. This is a tiny app so just maintaining one.
 	 */
-	private final String defaultPropertiesPath = "resources/properties";
+	private static final String defaultPropertiesPath = "resources/properties";
+
 	private ChessProperties properties;
 
-	public ChessApp() {
-		loadProperties();
-		String imgPath = properties.getProperty(ChessProperties.imagePathKey, ChessProperties.imagePathDefaultValue);
-		IconManager.getIconManager(imgPath);
-		ChessBoardModel model = new ChessBoardModel();
-		ChessBoardController controller = new ChessBoardController(model);
-		String title = properties.getProperty(ChessProperties.appNameKey, ChessProperties.appNameDefaultValue);
-		// the property is text so we have to parse it to an actual boolean
-		boolean showMoves = Boolean.parseBoolean(
-				properties.getProperty(ChessProperties.showMovesKey, ChessProperties.showMovesDefaultValue));
-		ChessBoardView jv = new ChessBoardView(controller, model, showMoves, title);
-		jv.addWindowListener(this);
-		jv.setSize(600, 600);
-		jv.setVisible(true);
+	public ChessApp(ChessProperties props) {
+		// we want to keep a reference to props so we can save them on application close
+		this.properties = props;
 	}
 
 	public static void main(String[] args) {
-		ChessApp chessApp = new ChessApp();
+		ChessProperties props = loadProperties();
+		ChessApp chessApp = new ChessApp(props);
+		String imgPath = props.getProperty(ChessProperties.imagePathKey, ChessProperties.imagePathDefaultValue);
+		IconManager.getIconManager(imgPath);
+		ChessBoardModel model = new ChessBoardModel();
+		ChessBoardController controller = new ChessBoardController(model);
+		String title = props.getProperty(ChessProperties.appNameKey, ChessProperties.appNameDefaultValue);
+		// the property is text so we have to parse it to an actual boolean
+		boolean showMoves = Boolean
+				.parseBoolean(props.getProperty(ChessProperties.showMovesKey, ChessProperties.showMovesDefaultValue));
+		ChessBoardView jv = new ChessBoardView(controller, model, showMoves, title);
+		jv.addWindowListener(chessApp);
+		jv.setSize(600, 600);
+		jv.setVisible(true);
+
 	}
 
-	private void loadProperties() {
+	private static ChessProperties loadProperties() {
 		// create and load default properties
-		properties = new ChessProperties();
+		ChessProperties props = new ChessProperties();
 		FileInputStream in;
 		try {
 			in = new FileInputStream(defaultPropertiesPath);
-			properties.load(in);
+			props.load(in);
 			in.close();
 		} catch (FileNotFoundException e) {
 			// TODO add logging, for now we'll ignore
@@ -69,9 +73,10 @@ public class ChessApp implements WindowListener {
 			// TODO add logging, for now we'll ignore
 			e.printStackTrace();
 		}
-		if (properties.isEmpty()) {
-			properties.initProperties();
+		if (props.isEmpty()) {
+			props.initProperties();
 		}
+		return props;
 	}
 
 	private void saveProperties() {

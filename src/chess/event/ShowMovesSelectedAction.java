@@ -13,6 +13,7 @@ import chess.controller.ChessBoardControllerINF;
  * @author John T. Langton
  *
  */
+@SuppressWarnings("serial")
 public class ShowMovesSelectedAction extends AbstractAction {
 
 	private ChessBoardControllerINF mover;

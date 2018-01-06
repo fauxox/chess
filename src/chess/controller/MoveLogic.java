@@ -120,7 +120,7 @@ public class MoveLogic {
 		ArrayList<BoardCoordinate> locations = new ArrayList<BoardCoordinate>(16);
 
 		// go left
-		for (int targetCol = col - 1; targetCol > 0; targetCol--) {
+		for (int targetCol = col - 1; targetCol > -1; targetCol--) {
 			Can result = canOccupySpace(model, row, col, row, targetCol);
 			if (result == Can.Yes) {
 				locations.add(new BoardCoordinate(row, targetCol));
@@ -164,7 +164,7 @@ public class MoveLogic {
 		}
 
 		// go up
-		for (int targetRow = row - 1; targetRow > 0; targetRow--) {
+		for (int targetRow = row - 1; targetRow > -1; targetRow--) {
 			Can result = canOccupySpace(model, row, col, targetRow, col);
 			if (result == Can.Yes) {
 				locations.add(new BoardCoordinate(targetRow, col));
@@ -249,7 +249,7 @@ public class MoveLogic {
 		ArrayList<BoardCoordinate> locations = new ArrayList<BoardCoordinate>(16);
 
 		// go left and up
-		for (int targetCol = col - 1, targetRow = row - 1; targetCol > 0 && targetRow > 0; targetCol--, targetRow--) {
+		for (int targetCol = col - 1, targetRow = row - 1; targetCol > -1 && targetRow > -1; targetCol--, targetRow--) {
 			Can result = canOccupySpace(model, row, col, targetRow, targetCol);
 			if (result == Can.Yes) {
 				locations.add(new BoardCoordinate(targetRow, targetCol));
@@ -265,7 +265,7 @@ public class MoveLogic {
 		}
 
 		// go right and up (the only logic that changes is the indexes)
-		for (int targetCol = col + 1, targetRow = row - 1; targetCol > 0 && targetRow > 0; targetCol++, targetRow--) {
+		for (int targetCol = col + 1, targetRow = row - 1; targetCol < 8 && targetRow > -1; targetCol++, targetRow--) {
 			Can result = canOccupySpace(model, row, col, targetRow, targetCol);
 			if (result == Can.Yes) {
 				locations.add(new BoardCoordinate(targetRow, targetCol));
@@ -281,7 +281,7 @@ public class MoveLogic {
 		}
 
 		// go left and down
-		for (int targetCol = col - 1, targetRow = row + 1; targetCol > 0 && targetRow > 0; targetCol--, targetRow++) {
+		for (int targetCol = col - 1, targetRow = row + 1; targetCol > -1 && targetRow < 8; targetCol--, targetRow++) {
 			Can result = canOccupySpace(model, row, col, targetRow, targetCol);
 			if (result == Can.Yes) {
 				locations.add(new BoardCoordinate(targetRow, targetCol));
@@ -297,7 +297,7 @@ public class MoveLogic {
 		}
 
 		// go right and down
-		for (int targetCol = col + 1, targetRow = row + 1; targetCol > 0 && targetRow > 0; targetCol++, targetRow++) {
+		for (int targetCol = col + 1, targetRow = row + 1; targetCol < 8 && targetRow < 8; targetCol++, targetRow++) {
 			Can result = canOccupySpace(model, row, col, targetRow, targetCol);
 			if (result == Can.Yes) {
 				locations.add(new BoardCoordinate(targetRow, targetCol));
@@ -323,9 +323,11 @@ public class MoveLogic {
 	public static ArrayList<BoardCoordinate> getQueenMoves(ChessBoardModel model, int row, int col) {
 		ArrayList<BoardCoordinate> locations = new ArrayList<BoardCoordinate>(16);
 
-		// basically just the rook moves
+		// basically just the rook moves + bishop moves
+
+		// rook moves
 		// go left
-		for (int targetCol = col - 1; targetCol > 0; targetCol--) {
+		for (int targetCol = col - 1; targetCol > -1; targetCol--) {
 			Can result = canOccupySpace(model, row, col, row, targetCol);
 			if (result == Can.Yes) {
 				locations.add(new BoardCoordinate(row, targetCol));
@@ -369,7 +371,7 @@ public class MoveLogic {
 		}
 
 		// go up
-		for (int targetRow = row - 1; targetRow > 0; targetRow--) {
+		for (int targetRow = row - 1; targetRow > -1; targetRow--) {
 			Can result = canOccupySpace(model, row, col, targetRow, col);
 			if (result == Can.Yes) {
 				locations.add(new BoardCoordinate(targetRow, col));
@@ -381,9 +383,9 @@ public class MoveLogic {
 			}
 		}
 
-		// basically just the bishop moves
+		// bishop moves
 		// go left and up
-		for (int targetCol = col - 1, targetRow = row - 1; targetCol > 0 && targetRow > 0; targetCol--, targetRow--) {
+		for (int targetCol = col - 1, targetRow = row - 1; targetCol > -1 && targetRow > -1; targetCol--, targetRow--) {
 			Can result = canOccupySpace(model, row, col, targetRow, targetCol);
 			if (result == Can.Yes) {
 				locations.add(new BoardCoordinate(targetRow, targetCol));
@@ -399,7 +401,7 @@ public class MoveLogic {
 		}
 
 		// go right and up (the only logic that changes is the indexes)
-		for (int targetCol = col + 1, targetRow = row - 1; targetCol > 0 && targetRow > 0; targetCol++, targetRow--) {
+		for (int targetCol = col + 1, targetRow = row - 1; targetCol < 8 && targetRow > -1; targetCol++, targetRow--) {
 			Can result = canOccupySpace(model, row, col, targetRow, targetCol);
 			if (result == Can.Yes) {
 				locations.add(new BoardCoordinate(targetRow, targetCol));
@@ -415,7 +417,7 @@ public class MoveLogic {
 		}
 
 		// go left and down
-		for (int targetCol = col - 1, targetRow = row + 1; targetCol > 0 && targetRow > 0; targetCol--, targetRow++) {
+		for (int targetCol = col - 1, targetRow = row + 1; targetCol > -1 && targetRow < 8; targetCol--, targetRow++) {
 			Can result = canOccupySpace(model, row, col, targetRow, targetCol);
 			if (result == Can.Yes) {
 				locations.add(new BoardCoordinate(targetRow, targetCol));
@@ -431,7 +433,7 @@ public class MoveLogic {
 		}
 
 		// go right and down
-		for (int targetCol = col + 1, targetRow = row + 1; targetCol > 0 && targetRow > 0; targetCol++, targetRow++) {
+		for (int targetCol = col + 1, targetRow = row + 1; targetCol < 8 && targetRow < 8; targetCol++, targetRow++) {
 			Can result = canOccupySpace(model, row, col, targetRow, targetCol);
 			if (result == Can.Yes) {
 				locations.add(new BoardCoordinate(targetRow, targetCol));
@@ -513,11 +515,33 @@ public class MoveLogic {
 	}
 
 	public static boolean canMove(ChessBoardModel model, int sourceRow, int sourceCol, int targetRow, int targetCol) {
-		ChessPiece piece = model.getChessPiece(sourceRow, sourceCol);
-		if (piece == null) {
+		// A few quick sanity checks in here so we don't have to
+		// repeat the logic in all of the methods called form here
+		// can't move a blank
+		ChessPiece sourcePiece = model.getChessPiece(sourceRow, sourceCol);
+		if (sourcePiece == null) {
 			return false;
 		}
-		switch (piece.getChessPieceType()) {
+		// both positions must be on the board
+		if (!(onBoard(sourceRow, sourceCol) && onBoard(targetRow, targetCol))) {
+			return false;
+		}
+		// if it's not your turn
+		if (model.getTurn() != sourcePiece.isBlack()) {
+			return false;
+		}
+		// if you're trying to take a piece of the same color
+		ChessPiece targetPiece = model.getChessPiece(targetRow, targetCol);
+		if (targetPiece != null && sourcePiece.isBlack() == targetPiece.isBlack()) {
+			return false;
+		}
+
+		/*
+		 * The rest of these methods have logic that focuses on whether a piece can move
+		 * where they're trying to move, and if there's another piece in the way before
+		 * they get to the intended target (except for the knight who jumps).
+		 */
+		switch (sourcePiece.getChessPieceType()) {
 		case Rook:
 			return canRookMove(model, sourceRow, sourceCol, targetRow, targetCol);
 		case Knight:
@@ -537,8 +561,60 @@ public class MoveLogic {
 
 	public static boolean canRookMove(ChessBoardModel model, int sourceRow, int sourceCol, int targetRow,
 			int targetCol) {
-		// TODO Auto-generated method stub
-		return false;
+		// how much you're moving up/down
+		int yDelta = targetRow - sourceRow;
+		// how much you're moving left/right
+		int xDelta = targetCol - sourceCol;
+
+		// In this case I decided to look for all conditions
+		// where the move was illegal and otherwise allow it
+
+		// you can only move up, down, left, and right,
+		// so one of your deltas has to be 0
+		if (yDelta != 0 && xDelta != 0) {
+			return false;
+		}
+
+		// otherwise let's see if there's a piece between
+		// where we are and where we want to be
+		// if we're moving down
+		if (yDelta > 1) {
+			for (int row = sourceRow + 1; row < targetRow; row++) {
+				if (model.getChessPiece(row, targetCol) != null) {
+					return false;
+				}
+			}
+		}
+		// if we're moving up
+		else if (yDelta < 1) {
+			for (int row = sourceRow - 1; row > targetRow; row--) {
+				if (model.getChessPiece(row, targetCol) != null) {
+					return false;
+				}
+			}
+		}
+		// if we're moving right
+		else if (xDelta > 1) {
+			for (int col = sourceCol + 1; col < targetCol; col++) {
+				if (model.getChessPiece(col, targetRow) != null) {
+					return false;
+				}
+			}
+		}
+		// if we're moving left
+		else if (xDelta < 1) {
+			for (int col = sourceCol - 1; col > targetCol; col--) {
+				if (model.getChessPiece(col, targetRow) != null) {
+					return false;
+				}
+			}
+		}
+
+		// don't necessarily need an else
+
+		// otherwise this is a legal move
+		return true;
+
 	}
 
 	public static boolean canKnightMove(ChessBoardModel model, int sourceRow, int sourceCol, int targetRow,
@@ -567,10 +643,6 @@ public class MoveLogic {
 
 	public static boolean canPawnMove(ChessBoardModel model, int sourceRow, int sourceCol, int targetRow,
 			int targetCol) {
-		// quick check to make sure both positions are on the board
-		if (!(onBoard(sourceRow, sourceCol) && onBoard(targetRow, targetCol))) {
-			return false;
-		}
 
 		ChessPiece sourcePiece = model.getChessPiece(sourceRow, sourceCol);
 		ChessPiece targetPiece = model.getChessPiece(targetRow, targetCol);

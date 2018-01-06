@@ -2,6 +2,7 @@ package chess.model;
 
 import java.util.ArrayList;
 
+import chess.event.ChessBoardHighlightEvent;
 import chess.event.ChessBoardModelEvent;
 import chess.event.ChessBoardModelListener;
 import chess.model.ChessPiece.ChessPieceType;
@@ -59,6 +60,10 @@ public class ChessBoardModel {
 	public void move(int sourceRow, int sourceCol, int targetRow, int targetCol) {
 		setChessPiece(targetRow, targetCol, board[sourceRow][sourceCol].getChessPiece());
 		setChessPiece(sourceRow, sourceCol, null);
+		changeTurn();
+	}
+
+	private void changeTurn() {
 		turn = !turn;
 		fireTurnChanged();
 	}
@@ -69,7 +74,7 @@ public class ChessBoardModel {
 
 	public void setChessPiece(int row, int col, ChessPiece piece) {
 		board[row][col].setChessPiece(piece);
-		fireChessBoardChangedEvent(row, col, board[row][col]);
+		fireChessBoardSquareChangedEvent(row, col, board[row][col]);
 	}
 
 	/**
@@ -85,32 +90,41 @@ public class ChessBoardModel {
 	}
 
 	public void clearHighlight() {
-		for (int i = 0; i < 8; i++) {
-			for (int j = 0; j < 8; j++) {
-				if (board[i][j].isHighlighted()) {
-					board[i][j].setHighlighted(false);
-					fireChessBoardChangedEvent(i, j, board[i][j]);
+		ArrayList<ChessBoardSquare> squares = new ArrayList<ChessBoardSquare>();
+		for (int row = 0; row < 8; row++) {
+			for (int col = 0; col < 8; col++) {
+				if (board[row][col].isHighlighted()) {
+					board[row][col].setHighlighted(false);
+					squares.add(board[row][col]);
 				}
 			}
 		}
-	}
-
-	public void setHighlight(int row, int col) {
-		board[row][col].setHighlighted(true);
-		fireChessBoardChangedEvent(row, col, board[row][col]);
+		fireChessBoardHighlightChangedEvent(squares);
 	}
 
 	public void setHighlight(ArrayList<BoardCoordinate> selections) {
+		ArrayList<ChessBoardSquare> squares = new ArrayList<ChessBoardSquare>();
 		for (int i = 0, n = selections.size(); i < n; i++) {
 			BoardCoordinate bc = selections.get(i);
-			setHighlight(bc.getRow(), bc.getCol());
+			int row = bc.getRow(), col = bc.getCol();
+			ChessBoardSquare square = board[row][col];
+			square.setHighlighted(true);
+			squares.add(square);
 		}
+		fireChessBoardHighlightChangedEvent(squares);
 	}
 
-	private void fireChessBoardChangedEvent(int row, int col, ChessBoardSquare cbs) {
+	private void fireChessBoardSquareChangedEvent(int row, int col, ChessBoardSquare cbs) {
 		ChessBoardModelEvent e = new ChessBoardModelEvent(row, col, cbs);
 		for (int k = 0, n = listeners.size(); k < n; k++) {
 			listeners.get(k).chessBoardModelChanged(e);
+		}
+	}
+
+	private void fireChessBoardHighlightChangedEvent(ArrayList<ChessBoardSquare> squares) {
+		ChessBoardHighlightEvent e = new ChessBoardHighlightEvent(squares);
+		for (int k = 0, n = listeners.size(); k < n; k++) {
+			listeners.get(k).chessBoardHighlightChanged(e);
 		}
 	}
 
@@ -138,37 +152,37 @@ public class ChessBoardModel {
 	public void initBoard() {
 		// first index is row, second index is col
 		board = new ChessBoardSquare[8][8];
-		board[0][0] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Rook, true));
-		board[0][1] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Knight, true));
-		board[0][2] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Bishop, true));
-		board[0][3] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Queen, true));
-		board[0][4] = new ChessBoardSquare(new ChessPiece(ChessPieceType.King, true));
-		board[0][5] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Bishop, true));
-		board[0][6] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Knight, true));
-		board[0][7] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Rook, true));
+		board[0][0] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Rook, true), 0, 0);
+		board[0][1] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Knight, true), 0, 1);
+		board[0][2] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Bishop, true), 0, 2);
+		board[0][3] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Queen, true), 0, 3);
+		board[0][4] = new ChessBoardSquare(new ChessPiece(ChessPieceType.King, true), 0, 4);
+		board[0][5] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Bishop, true), 0, 5);
+		board[0][6] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Knight, true), 0, 6);
+		board[0][7] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Rook, true), 0, 7);
 
 		for (int col = 0; col < 8; col++) {
-			board[1][col] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Pawn, true));
+			board[1][col] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Pawn, true), 1, col);
 		}
 
 		for (int row = 2; row < 6; row++) {
 			for (int col = 0; col < 8; col++) {
-				board[row][col] = new ChessBoardSquare();
+				board[row][col] = new ChessBoardSquare(row, col);
 			}
 		}
 
 		for (int col = 0; col < 8; col++) {
-			board[6][col] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Pawn, false));
+			board[6][col] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Pawn, false), 6, col);
 		}
 
-		board[7][0] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Rook, false));
-		board[7][1] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Knight, false));
-		board[7][2] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Bishop, false));
-		board[7][3] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Queen, false));
-		board[7][4] = new ChessBoardSquare(new ChessPiece(ChessPieceType.King, false));
-		board[7][5] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Bishop, false));
-		board[7][6] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Knight, false));
-		board[7][7] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Rook, false));
+		board[7][0] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Rook, false), 7, 0);
+		board[7][1] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Knight, false), 7, 1);
+		board[7][2] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Bishop, false), 7, 2);
+		board[7][3] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Queen, false), 7, 3);
+		board[7][4] = new ChessBoardSquare(new ChessPiece(ChessPieceType.King, false), 7, 4);
+		board[7][5] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Bishop, false), 7, 5);
+		board[7][6] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Knight, false), 7, 6);
+		board[7][7] = new ChessBoardSquare(new ChessPiece(ChessPieceType.Rook, false), 7, 7);
 		// set the turn to black
 		turn = true;
 	}

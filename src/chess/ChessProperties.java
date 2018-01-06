@@ -9,6 +9,7 @@ import java.util.Properties;
  * @author John T. Langton
  *
  */
+@SuppressWarnings("serial")
 public class ChessProperties extends Properties {
 
 	// Property keys (may not contain all keys for all properties)

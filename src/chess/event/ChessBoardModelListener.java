@@ -10,4 +10,6 @@ public interface ChessBoardModelListener {
 
 	public void boardReset(ChessBoardModel chessBoardModel);
 
+	public void chessBoardHighlightChanged(ChessBoardHighlightEvent e);
+
 }
