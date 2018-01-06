@@ -12,7 +12,7 @@ import chess.view.ChessButton;
  */
 public interface ChessBoardControllerINF {
 
-	public void showMoves(boolean flag);
+	public void setShowMoves(boolean flag);
 
 	public void selectionChanged(ChessButton lastToggle, ChessButton chessButton);
 

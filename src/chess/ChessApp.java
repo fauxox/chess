@@ -7,9 +7,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JFrame;
-
 import chess.controller.ChessBoardController;
 import chess.model.ChessBoardModel;
 import chess.view.ChessBoardView;
@@ -46,7 +43,6 @@ public class ChessApp implements WindowListener {
 		String title = properties.getProperty(ChessProperties.appNameKey, ChessProperties.appNameDefaultValue)
 				+ model.getTurnString();
 		ChessBoardView jv = new ChessBoardView(controller, model, properties, title);
-		jv.addBoardListener(controller);
 		jv.addWindowListener(this);
 		jv.setSize(600, 600);
 		jv.setVisible(true);

@@ -6,8 +6,8 @@ public class ChessPiece {
 		King, Queen, Bishop, Knight, Rook, Pawn
 	}
 
-	private ChessPieceType cpt;
-	private boolean isBlack;
+	private final ChessPieceType cpt;
+	private final boolean isBlack;
 
 	ChessPiece(ChessPieceType cpt, boolean isBlack) {
 		this.cpt = cpt;
@@ -18,16 +18,8 @@ public class ChessPiece {
 		return cpt;
 	}
 
-	public void setChessPieceType(ChessPieceType cpt) {
-		this.cpt = cpt;
-	}
-
 	public boolean isBlack() {
 		return isBlack;
-	}
-
-	public void setBlack(boolean isBlack) {
-		this.isBlack = isBlack;
 	}
 
 }

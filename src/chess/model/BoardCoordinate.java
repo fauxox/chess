@@ -1,37 +1,34 @@
 package chess.model;
 
 /**
- * Super, compact class for holding a coordinate of chess board.
+ * Compact class for holding a coordinate of chess board.
  * 
  * @author John T. Langton
  *
  */
 public class BoardCoordinate {
 
-	/**
-	 * I use bytes since we'll only have values between 0 and 8.
-	 */
-	private byte x, y;
+	private int row, col;
 
-	public BoardCoordinate(byte x, byte y) {
-		this.x = x;
-		this.y = y;
+	public BoardCoordinate(int row, int col) {
+		this.row = row;
+		this.col = col;
 	}
 
-	public byte getX() {
-		return x;
+	public int getRow() {
+		return row;
 	}
 
-	public void setX(byte x) {
-		this.x = x;
+	public void setRow(int row) {
+		this.row = row;
 	}
 
-	public byte getY() {
-		return y;
+	public int getCol() {
+		return col;
 	}
 
-	public void setY(byte y) {
-		this.y = y;
+	public void setCol(int col) {
+		this.col = col;
 	}
 
 }

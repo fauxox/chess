@@ -3,30 +3,15 @@ package chess.view;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
-import java.awt.Image;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
-import javax.imageio.ImageIO;
-import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JToggleButton;
-import javax.swing.TransferHandler;
 
 import chess.ChessProperties;
 import chess.controller.ChessBoardController;
@@ -34,7 +19,7 @@ import chess.controller.ChessBoardControllerINF;
 import chess.event.ChessBoardModelEvent;
 import chess.event.ChessBoardModelListener;
 import chess.event.NewGameAction;
-import chess.event.ShowMovesAction;
+import chess.event.ShowMovesSelectedAction;
 import chess.event.ToggleAction;
 import chess.model.ChessBoardModel;
 import chess.model.ChessBoardSquare;
@@ -44,20 +29,12 @@ public class ChessBoardView extends JFrame implements ChessBoardModelListener {
 
 	private ChessButton[][] buttons;
 
-	private ChessButton lastToggle;
-
 	private Color defaultBackgroundColor;
 
 	private String defaultFrameTitle;
 
 	private JCheckBoxMenuItem showMoves;
 
-	/**
-	 * 
-	 * @param controller
-	 * @param model
-	 * @param properties
-	 */
 	public ChessBoardView(ChessBoardController controller, ChessBoardModel model, ChessProperties properties,
 			String title) {
 		// Doing super() like this invokes the constructor in the super class. The
@@ -66,11 +43,10 @@ public class ChessBoardView extends JFrame implements ChessBoardModelListener {
 		// ourselves in our constructor here.
 		super(title);
 		this.defaultFrameTitle = title;
-		model.addChessBoardModelListener(this);
 		setJMenuBar(createMenuBar(controller, properties));
 		JPanel buttonPanel = createButtonPanel(model, controller);
 		super.getContentPane().add(buttonPanel, BorderLayout.CENTER);
-		addBoardListener(controller);
+		model.addChessBoardModelListener(this);
 
 		super.setDefaultLookAndFeelDecorated(true);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -82,6 +58,8 @@ public class ChessBoardView extends JFrame implements ChessBoardModelListener {
 	 * easier to reason about them as well as test them. That point is probably more
 	 * relevant for breaking out business logic.
 	 * 
+	 * @param model
+	 * @param mover
 	 * @return
 	 */
 	private JPanel createButtonPanel(ChessBoardModel model, ChessBoardControllerINF mover) {
@@ -96,14 +74,15 @@ public class ChessBoardView extends JFrame implements ChessBoardModelListener {
 		//
 		// MyTransferHandler th = new MyTransferHandler("icon");
 
+		// It's kind of funky but we're using the same action for all buttons.
 		ToggleAction toggleAction = new ToggleAction(mover);
 
-		for (int i = 0; i < buttons.length; i++) {
-			for (int j = 0; j < buttons[0].length; j++) {
-				buttons[i][j] = new ChessButton(toggleAction, (byte) i, (byte) j);
-				updatePosition(i, j, model.getChessBoardSquare(i, j));
-				buttonPanel.add(buttons[i][j]);
-				bg.add(buttons[i][j]);
+		for (int row = 0; row < buttons.length; row++) {
+			for (int col = 0; col < buttons[0].length; col++) {
+				buttons[row][col] = new ChessButton(toggleAction, (byte) row, (byte) col);
+				updatePosition(row, col, model.getChessBoardSquare(row, col));
+				buttonPanel.add(buttons[row][col]);
+				bg.add(buttons[row][col]);
 				// buttons[i][j].addMouseListener(dma);
 				// buttons[i][j].setTransferHandler(th);
 			}
@@ -130,9 +109,12 @@ public class ChessBoardView extends JFrame implements ChessBoardModelListener {
 
 	private JMenu createOptionsMenu(ChessBoardControllerINF mover, ChessProperties properties) {
 		JMenu optionsMenu = new JMenu("Options");
-		showMoves = new JCheckBoxMenuItem(new ShowMovesAction(mover));
-		showMoves.setSelected(Boolean.parseBoolean(
-				properties.getProperty(ChessProperties.showMovesKey, ChessProperties.showMovesDefaultValue)));
+		showMoves = new JCheckBoxMenuItem(new ShowMovesSelectedAction(mover));
+		// the property is text so we have to parse it to an actual boolean
+		boolean showMovesSelected = Boolean.parseBoolean(
+				properties.getProperty(ChessProperties.showMovesKey, ChessProperties.showMovesDefaultValue));
+		showMoves.setSelected(showMovesSelected);
+		mover.setShowMoves(showMovesSelected);
 		optionsMenu.add(showMoves);
 		return optionsMenu;
 	}
@@ -141,44 +123,44 @@ public class ChessBoardView extends JFrame implements ChessBoardModelListener {
 	 * This updates a single position on the board with the piece that will go there
 	 * (or blank).
 	 * 
-	 * @param i
-	 * @param j
+	 * @param row
+	 * @param col
 	 * @param chessBoardSquare
 	 *            should never be null, once board is initialized, though the piece
 	 *            it contains may be null
 	 */
-	private void updatePosition(int i, int j, ChessBoardSquare chessBoardSquare) {
+	private void updatePosition(int row, int col, ChessBoardSquare chessBoardSquare) {
 		// set the color of the square itself
 		if (chessBoardSquare.isHighlighted()) {
-			buttons[i][j].setBackground(Color.yellow);
+			buttons[row][col].setBackground(Color.yellow);
 		} else {
-			buttons[i][j].setBackground(defaultBackgroundColor);
+			buttons[row][col].setBackground(defaultBackgroundColor);
 		}
 
 		ChessPiece piece = chessBoardSquare.getChessPiece();
 		// if there's no piece at this location on the board
 		if (piece == null) {
 			// set the icon to null so nothing appears
-			buttons[i][j].setIcon(null);
+			buttons[row][col].setIcon(null);
 		}
 		// otherwise update the icon
 		else {
-			IconManager.getIconManager().updateIcon(buttons[i][j], piece);
+			IconManager.getIconManager().updateIcon(buttons[row][col], piece);
 		}
 
 	}
 
 	public void addBoardListener(ActionListener bl) {
-		for (int i = 0; i < buttons.length; i++) {
-			for (int j = 0; j < buttons[0].length; j++) {
-				buttons[i][j].addActionListener(bl);
+		for (int row = 0; row < buttons.length; row++) {
+			for (int col = 0; col < buttons[0].length; col++) {
+				buttons[row][col].addActionListener(bl);
 			}
 		}
 	}
 
 	@Override
 	public void chessBoardModelChanged(ChessBoardModelEvent e) {
-		updatePosition(e.getX(), e.getY(), e.getChessBoardSquare());
+		updatePosition(e.getRow(), e.getCol(), e.getChessBoardSquare());
 	}
 
 	@Override
@@ -197,9 +179,9 @@ public class ChessBoardView extends JFrame implements ChessBoardModelListener {
 	@Override
 	public void boardReset(ChessBoardModel model) {
 		// reset the buttons
-		for (int i = 0; i < buttons.length; i++) {
-			for (int j = 0; j < buttons[0].length; j++) {
-				updatePosition(i, j, model.getChessBoardSquare(i, j));
+		for (int row = 0; row < buttons.length; row++) {
+			for (int col = 0; col < buttons[0].length; col++) {
+				updatePosition(row, col, model.getChessBoardSquare(row, col));
 			}
 		}
 		// reset the title for the turn

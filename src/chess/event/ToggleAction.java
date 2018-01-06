@@ -21,6 +21,7 @@ public class ToggleAction extends AbstractAction {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		ChessButton chessButton = (ChessButton) e.getSource();
+		//System.out.println("in event and x is " + chessButton.getI() + " and y is " + chessButton.getJ());
 		mover.selectionChanged(lastToggle, chessButton);
 		lastToggle = chessButton;
 	}

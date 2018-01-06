@@ -13,11 +13,11 @@ import chess.controller.ChessBoardControllerINF;
  * @author John T. Langton
  *
  */
-public class ShowMovesAction extends AbstractAction {
+public class ShowMovesSelectedAction extends AbstractAction {
 
 	private ChessBoardControllerINF mover;
 
-	public ShowMovesAction(ChessBoardControllerINF mover) {
+	public ShowMovesSelectedAction(ChessBoardControllerINF mover) {
 		super("Show Moves");
 		this.mover = mover;
 	}
@@ -25,7 +25,7 @@ public class ShowMovesAction extends AbstractAction {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		boolean showMoves = ((JCheckBoxMenuItem) e.getSource()).isSelected();
-		mover.showMoves(showMoves);
+		mover.setShowMoves(showMoves);
 	}
 
 }

@@ -1,24 +1,16 @@
 package chess.controller;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import chess.model.ChessBoardModel;
 import chess.model.ChessPiece;
 import chess.view.ChessButton;
 
-public class ChessBoardController implements ActionListener, ChessBoardControllerINF {
+public class ChessBoardController implements ChessBoardControllerINF {
 
 	private ChessBoardModel model;
 	private boolean showMoves = false;
 
 	public ChessBoardController(ChessBoardModel model) {
 		this.model = model;
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-
 	}
 
 	/**
@@ -28,29 +20,31 @@ public class ChessBoardController implements ActionListener, ChessBoardControlle
 	 * but generally the model is for storing state, not really business logic
 	 * outside of that.
 	 * 
-	 * @param sourceX
-	 * @param sourceY
-	 * @param targetX
-	 * @param targetY
+	 * @param sourceRow
+	 * @param sourceCol
+	 * @param targetRow
+	 * @param targetCol
 	 */
-	public void move(ChessButton chessButton, int sourceX, int sourceY, int targetX, int targetY) {
-		if (MoveLogic.canMove(model, sourceX, sourceY, targetX, targetY)) {
-			model.move(sourceX, sourceY, targetX, targetY);
+	public void move(ChessButton chessButton, int sourceRow, int sourceCol, int targetRow, int targetCol) {
+		if (MoveLogic.canMove(model, sourceRow, sourceCol, targetRow, targetCol)) {
+			model.move(sourceRow, sourceCol, targetRow, targetCol);
 		}
-		// in either case we'll unselect the button and set the lastToggle to null
-		chessButton.setSelected(false);
+		// If they tried an illegal move we could show a window that says that, or do
+		// something else, but for now we just do nothing and wait for them to start
+		// another move.
 	}
 
-	private void showMoves(ChessButton chessButton) {
+	private void showMoves(int row, int col) {
 		model.clearHighlight();
-		if (chessButton != null) {
-			model.setHighlight(MoveLogic.getMoves(model, chessButton.getI(), chessButton.getJ()));
-		}
+		model.setHighlight(MoveLogic.getMoves(model, row, col));
 	}
 
 	@Override
-	public void showMoves(boolean flag) {
+	public void setShowMoves(boolean flag) {
 		this.showMoves = flag;
+		if (!showMoves) {
+			model.clearHighlight();
+		}
 	}
 
 	/**
@@ -71,15 +65,20 @@ public class ChessBoardController implements ActionListener, ChessBoardControlle
 	}
 
 	public void selectionChanged(ChessButton lastToggle, ChessButton targetButton) {
-		int newX = targetButton.getI();
-		int newY = targetButton.getJ();
-		ChessPiece targetPiece = model.getChessBoardSquare(newX, newY).getChessPiece();
+		int sourceRow = targetButton.getRow();
+		int sourceCol = targetButton.getCol();
+		ChessPiece sourcePiece = model.getChessBoardSquare(sourceRow, sourceCol).getChessPiece();
+		int targetRow = targetButton.getRow();
+		int targetCol = targetButton.getCol();
+		ChessPiece targetPiece = model.getChessBoardSquare(targetRow, targetCol).getChessPiece();
 
-		// if nothing was selected (note if the first part of the OR is true, then the
-		// second part won't be evaluated and therefore won't throw a null pointer
-		// exception), and...
-		if (lastToggle == null
-				|| model.getChessBoardSquare(lastToggle.getI(), lastToggle.getJ()).getChessPiece() == null) {
+		// if no piece was selected before, or the other players piece was selected
+		// before... Note that with an OR statement, if the first clause is true, then
+		// the rest of the clauses are not evaluated. If they were, the in this case
+		// you'd throw a null pointer exception. We know if we get to the second clause,
+		// that the first one was false, and therefore we won't throw a null pointer
+		// exception because we're calling isBlack() on sourcePiece which isn't null.
+		if (sourcePiece == null || sourcePiece.isBlack() != model.getTurn()) {
 			// you select another blank space
 			if (targetPiece == null) {
 				// then don't do anything
@@ -90,39 +89,34 @@ public class ChessBoardController implements ActionListener, ChessBoardControlle
 				// then do nothing
 				return;
 			}
-			// otherwise the piece is not null and it's one of your pieces
-			else {
-				// so track it and show moves if necessary
+			// Otherwise the piece is not null and it's one of your pieces. So if showMoves
+			// is selected go ahead and do so
+			else if (showMoves) {
+				showMoves(targetRow, targetCol);
 				return;
 			}
 		}
-
-		// if we're down here then lastToggle was not null, and it's
-		// ChessPiece was not null - so it had a piece, so let's grab it
-		int lastX = lastToggle.getI();
-		int lastY = lastToggle.getJ();
-		ChessPiece lastPiece = model.getChessBoardSquare(lastX, lastY).getChessPiece();
 
 		// Based on the total logic in here, if we get down here, lastPiece should be
 		// the turn taker's piece. So we'll assume that from here.
 
 		// If they're selecting a blank location or one of the other players pieces
-		// we'll assume they're trying to move there. Note that if the first part of the
-		// OR condition is true the second part won't be evaluated, thus it won't throw
-		// a null pointer (which it would if it was evaluated and the first part was
-		// true). This is an optimization because, since it's an OR, as soon as one
-		// clause it true, the result is true, you don't need to know the other one.
+		// we'll assume they're trying to move there.
 		if (targetPiece == null || targetPiece.isBlack() != model.getTurn()) {
-			move(targetButton, lastX, lastY, newX, newY);
+			move(targetButton, sourceRow, sourceCol, targetRow, targetCol);
 			return;
 		}
-		// if you're just selecting another one of your own pieces
+		// if they're just selecting another one of their own pieces
 		else if (targetPiece.isBlack() == model.getTurn()) {
+			// then just update selection if we're showing moves
+			if (showMoves) {
+				showMoves(targetRow, targetCol);
+			}
 			return;
 		}
 
-		// Because of the return statements in the last if and else if, we should never
-		// get down here unless I forgot something that should have been in an else.
+		// At this point we should have addressed every possibility and returned. So if
+		// we make it down here, I forgot some logic.
 		try {
 			throw new Exception("Uncle Johnny messed up.");
 		} catch (Exception e1) {
