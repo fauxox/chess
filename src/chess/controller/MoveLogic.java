@@ -316,138 +316,14 @@ public class MoveLogic {
 	}
 
 	public static ArrayList<BoardCoordinate> getKingMoves(ChessBoardModel model, int row, int col) {
-		// TODO: placeholder, replace with actual moves
+		// TODO: Leaving for the newphews to complete.
 		return new ArrayList<BoardCoordinate>(0);
 	}
 
 	public static ArrayList<BoardCoordinate> getQueenMoves(ChessBoardModel model, int row, int col) {
-		ArrayList<BoardCoordinate> locations = new ArrayList<BoardCoordinate>(16);
-
-		// basically just the rook moves + bishop moves
-
-		// rook moves
-		// go left
-		for (int targetCol = col - 1; targetCol > -1; targetCol--) {
-			Can result = canOccupySpace(model, row, col, row, targetCol);
-			if (result == Can.Yes) {
-				locations.add(new BoardCoordinate(row, targetCol));
-			} else if (result == Can.Take) {
-				// can't move any further in this direction because we took a piece
-				locations.add(new BoardCoordinate(row, targetCol));
-				break;
-			} else {
-				// stop as soon as we reach a space we can't occupy
-				// this breaks out of the for loop
-				break;
-			}
-		}
-
-		// go down
-		for (int targetRow = row + 1; targetRow < 8; targetRow++) {
-			Can result = canOccupySpace(model, row, col, targetRow, col);
-			if (result == Can.Yes) {
-				locations.add(new BoardCoordinate(targetRow, col));
-			} else if (result == Can.Take) {
-				locations.add(new BoardCoordinate(targetRow, col));
-				break;
-			} else {
-				break;
-			}
-		}
-
-		// go right
-		for (int targetCol = col + 1; targetCol < 8; targetCol++) {
-			Can result = canOccupySpace(model, row, col, row, targetCol);
-			if (result == Can.Yes) {
-				locations.add(new BoardCoordinate(row, targetCol));
-			} else if (result == Can.Take) {
-				locations.add(new BoardCoordinate(row, targetCol));
-				break;
-			}
-
-			else {
-				break;
-			}
-		}
-
-		// go up
-		for (int targetRow = row - 1; targetRow > -1; targetRow--) {
-			Can result = canOccupySpace(model, row, col, targetRow, col);
-			if (result == Can.Yes) {
-				locations.add(new BoardCoordinate(targetRow, col));
-			} else if (result == Can.Take) {
-				locations.add(new BoardCoordinate(targetRow, col));
-				break;
-			} else {
-				break;
-			}
-		}
-
-		// bishop moves
-		// go left and up
-		for (int targetCol = col - 1, targetRow = row - 1; targetCol > -1 && targetRow > -1; targetCol--, targetRow--) {
-			Can result = canOccupySpace(model, row, col, targetRow, targetCol);
-			if (result == Can.Yes) {
-				locations.add(new BoardCoordinate(targetRow, targetCol));
-			} else if (result == Can.Take) {
-				// can't move any further in this direction because we took a piece
-				locations.add(new BoardCoordinate(targetRow, targetCol));
-				break;
-			} else {
-				// stop as soon as we reach a space we can't occupy
-				// this breaks out of the for loop
-				break;
-			}
-		}
-
-		// go right and up (the only logic that changes is the indexes)
-		for (int targetCol = col + 1, targetRow = row - 1; targetCol < 8 && targetRow > -1; targetCol++, targetRow--) {
-			Can result = canOccupySpace(model, row, col, targetRow, targetCol);
-			if (result == Can.Yes) {
-				locations.add(new BoardCoordinate(targetRow, targetCol));
-			} else if (result == Can.Take) {
-				// can't move any further in this direction because we took a piece
-				locations.add(new BoardCoordinate(targetRow, targetCol));
-				break;
-			} else {
-				// stop as soon as we reach a space we can't occupy
-				// this breaks out of the for loop
-				break;
-			}
-		}
-
-		// go left and down
-		for (int targetCol = col - 1, targetRow = row + 1; targetCol > -1 && targetRow < 8; targetCol--, targetRow++) {
-			Can result = canOccupySpace(model, row, col, targetRow, targetCol);
-			if (result == Can.Yes) {
-				locations.add(new BoardCoordinate(targetRow, targetCol));
-			} else if (result == Can.Take) {
-				// can't move any further in this direction because we took a piece
-				locations.add(new BoardCoordinate(targetRow, targetCol));
-				break;
-			} else {
-				// stop as soon as we reach a space we can't occupy
-				// this breaks out of the for loop
-				break;
-			}
-		}
-
-		// go right and down
-		for (int targetCol = col + 1, targetRow = row + 1; targetCol < 8 && targetRow < 8; targetCol++, targetRow++) {
-			Can result = canOccupySpace(model, row, col, targetRow, targetCol);
-			if (result == Can.Yes) {
-				locations.add(new BoardCoordinate(targetRow, targetCol));
-			} else if (result == Can.Take) {
-				// can't move any further in this direction because we took a piece
-				locations.add(new BoardCoordinate(targetRow, targetCol));
-				break;
-			} else {
-				// stop as soon as we reach a space we can't occupy
-				// this breaks out of the for loop
-				break;
-			}
-		}
-
+		// A queen can basically move like a rook and bishop combined
+		ArrayList<BoardCoordinate> locations = getRookMoves(model, row, col);
+		locations.addAll(getBishopMoves(model, row, col));
 		return locations;
 	}
 
@@ -575,8 +451,10 @@ public class MoveLogic {
 			return false;
 		}
 
-		// otherwise let's see if there's a piece between
-		// where we are and where we want to be
+		// Otherwise let's see if there's a piece between where we are and where we want
+		// to be. Note if yDelta is 1 then we're only moving 1 space so don't have to
+		// check if there's a piece between, so we start checking at yDelta>1.
+
 		// if we're moving down
 		if (yDelta > 1) {
 			for (int row = sourceRow + 1; row < targetRow; row++) {
@@ -614,31 +492,103 @@ public class MoveLogic {
 
 		// otherwise this is a legal move
 		return true;
-
 	}
 
 	public static boolean canKnightMove(ChessBoardModel model, int sourceRow, int sourceCol, int targetRow,
 			int targetCol) {
-		// TODO Auto-generated method stub
+		// TODO Leaving for the nephews to complete
+
+		// you don't have to check if there's a piece between the source and target
+		// location because knights jump. Just have to make sure it's a legal move. You
+		// can refer to the getKnightMoves() method for guidance or even call it in your
+		// logic or refactor so this method and it share logic.
 		return false;
 	}
 
 	public static boolean canBishopMove(ChessBoardModel model, int sourceRow, int sourceCol, int targetRow,
 			int targetCol) {
-		// TODO Auto-generated method stub
-		return false;
+		// how much you're moving up/down
+		int yDelta = targetRow - sourceRow;
+		// how much you're moving left/right
+		int xDelta = targetCol - sourceCol;
+
+		// you can only move diagonal (remember that yDelta or xDelta could be negative
+		// but their squares should be the same sign and value)
+		if (((yDelta * yDelta) != (xDelta * xDelta)) || xDelta == 0) {
+			return false;
+		}
+
+		// otherwise let's see if there's a piece between
+		// where we are and where we want to be
+		// if we're moving down and to the right
+		if (yDelta > 1 && xDelta > 1) {
+			for (int row = sourceRow + 1; row < targetRow; row++) {
+				for (int col = sourceCol + 1; col < targetCol; col++) {
+					if (model.getChessPiece(row, col) != null) {
+						return false;
+					}
+				}
+			}
+		}
+
+		// if we're moving down and to the left
+		else if (yDelta < -1 && xDelta > 1) {
+			for (int row = sourceRow + 1; row < targetRow; row++) {
+				for (int col = sourceCol - 1; col > targetCol; col--) {
+					if (model.getChessPiece(row, col) != null) {
+						return false;
+					}
+				}
+			}
+		}
+
+		// if we're moving up and to the right
+		else if (yDelta > 1 && xDelta < -1) {
+			for (int row = sourceRow - 1; row > targetRow; row--) {
+				for (int col = sourceCol + 1; col > targetCol; col++) {
+					if (model.getChessPiece(row, col) != null) {
+						return false;
+					}
+				}
+			}
+		}
+
+		// if we're moving up and to the left
+		else if (yDelta < -1 && xDelta < -1) {
+			for (int row = sourceRow - 1; row > targetRow; row--) {
+				for (int col = sourceCol - 1; col > targetCol; col--) {
+					if (model.getChessPiece(row, col) != null) {
+						return false;
+					}
+				}
+			}
+		}
+
+		// don't necessarily need an else
+
+		// otherwise this is a legal move
+		return true;
 	}
 
 	public static boolean canKingMove(ChessBoardModel model, int sourceRow, int sourceCol, int targetRow,
 			int targetCol) {
-		// TODO Auto-generated method stub
+		// TODO Leaving for the nephews to complete
+		// The kind can move in any direction as long
+		// as it's only 1 away from where it is.
 		return false;
 	}
 
 	public static boolean canQueenMove(ChessBoardModel model, int sourceRow, int sourceCol, int targetRow,
 			int targetCol) {
-		// TODO Auto-generated method stub
-		return false;
+		// A queen can basically move like a rook and bishop combined. So if neither the
+		// rook nor bishop could make this move then the queen cannot, otherwise one of
+		// them can, thus the queen can
+		if (!canRookMove(model, sourceRow, sourceCol, targetRow, targetCol)
+				&& !canBishopMove(model, sourceRow, sourceCol, targetRow, targetCol)) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 	public static boolean canPawnMove(ChessBoardModel model, int sourceRow, int sourceCol, int targetRow,
