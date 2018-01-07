@@ -12,6 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import chess.controller.ChessBoardController;
@@ -25,6 +26,7 @@ import chess.event.ToggleAction;
 import chess.model.ChessBoardModel;
 import chess.model.ChessBoardSquare;
 import chess.model.ChessPiece;
+import chess.model.ChessPiece.ChessPieceType;
 
 @SuppressWarnings("serial")
 public class ChessBoardView extends JFrame implements ChessBoardModelListener {
@@ -54,6 +56,10 @@ public class ChessBoardView extends JFrame implements ChessBoardModelListener {
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 
+	/////////////////////////////////////////////////////////////
+	// GUI support code
+	/////////////////////////////////////////////////////////////
+
 	/**
 	 * I break out creation of components of the view so the constructor doesn't get
 	 * too enormous. This helps to isolate logic for certain components and makes it
@@ -81,7 +87,7 @@ public class ChessBoardView extends JFrame implements ChessBoardModelListener {
 
 		for (int row = 0; row < buttons.length; row++) {
 			for (int col = 0; col < buttons[0].length; col++) {
-				//we could use ChessBoardSquare as a model for each button
+				// we could use ChessBoardSquare as a model for each button
 				buttons[row][col] = new ChessButton(toggleAction, (byte) row, (byte) col);
 				updatePosition(row, col, model.getChessBoardSquare(row, col));
 				buttonPanel.add(buttons[row][col]);
@@ -119,6 +125,10 @@ public class ChessBoardView extends JFrame implements ChessBoardModelListener {
 		return optionsMenu;
 	}
 
+	/////////////////////////////////////////////////////////////
+	// Internal business logic
+	/////////////////////////////////////////////////////////////
+
 	/**
 	 * This updates a single position on the board with the piece that will go there
 	 * (or blank).
@@ -149,6 +159,36 @@ public class ChessBoardView extends JFrame implements ChessBoardModelListener {
 		}
 
 	}
+
+	/**
+	 * Convenience method for app saving properties.
+	 * 
+	 * @return whether the Show Moves JCheckBoxMenuItem in the Options menu is
+	 *         selected.
+	 */
+	public boolean isShowMovesSelected() {
+		return showMovesMenu.isSelected();
+	}
+
+	private void disableButtons() {
+		for (int row = 0; row < buttons.length; row++) {
+			for (int col = 0; col < buttons[0].length; col++) {
+				buttons[row][col].setEnabled(false);
+			}
+		}
+	}
+
+	private void enableButtons() {
+		for (int row = 0; row < buttons.length; row++) {
+			for (int col = 0; col < buttons[0].length; col++) {
+				buttons[row][col].setEnabled(true);
+			}
+		}
+	}
+
+	/////////////////////////////////////////////////////////////
+	// Event related code
+	/////////////////////////////////////////////////////////////
 
 	public void addBoardListener(ActionListener bl) {
 		for (int row = 0; row < buttons.length; row++) {
@@ -186,16 +226,7 @@ public class ChessBoardView extends JFrame implements ChessBoardModelListener {
 		}
 		// reset the title for the turn
 		turnChanged(model.getTurnString());
-	}
-
-	/**
-	 * Convenience method for app saving properties.
-	 * 
-	 * @return whether the Show Moves JCheckBoxMenuItem in the Options menu is
-	 *         selected.
-	 */
-	public boolean isShowMovesSelected() {
-		return showMovesMenu.isSelected();
+		enableButtons();
 	}
 
 	@Override
@@ -213,7 +244,22 @@ public class ChessBoardView extends JFrame implements ChessBoardModelListener {
 		}
 	}
 
-	// Drag and drop support
+	@Override
+	public void gameWon(boolean clr) {
+		String msg;
+		if (clr) {
+			msg = "Black won!";
+		} else {
+			msg = "White won!";
+		}
+
+		JOptionPane.showMessageDialog(this, msg, "Chess Message", JOptionPane.INFORMATION_MESSAGE,
+				IconManager.getIconManager().getIcon(clr, ChessPieceType.King));
+		// I guess disable all of the buttons until they select new game
+		disableButtons();
+	}
+
+	// Drag and drop support, started to do this but left off...
 
 	// class DragMouseAdapter extends MouseAdapter {
 	// public void mousePressed(MouseEvent e) {

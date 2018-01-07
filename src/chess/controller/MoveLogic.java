@@ -7,10 +7,11 @@ import chess.model.ChessBoardModel;
 import chess.model.ChessPiece;
 
 /**
- * Note that the logic in here assumes black always starts at the top. We could
- * enable players to choose color and have it be on top or bottom, but didn't
- * think about it. In that case you'd have to update the logic a bit. I also
- * think in terms of pixel coordinates, so top left is double array index of 0,0
+ * Note that the logic in here assumes 0,0 is the top left of the board and
+ * black is at the top. Most of the methods in here are static which means they
+ * are common across all instances. In general, the less global variable
+ * references you maintain the better (uses less memory, causes less object
+ * creation and garbage collection which means less wasted computation).
  * 
  * @author John T. Langton
  *
@@ -19,9 +20,10 @@ public class MoveLogic {
 
 	/**
 	 * Yes means a piece can move to a blank space. No means a piece cannot move to
-	 * a space. Final means a piece can move to a space to take another piece.
+	 * a space, blank or occupied. Take means a piece can move to a space to take
+	 * another piece.
 	 * 
-	 * @author psye
+	 * @author John T. Langton
 	 *
 	 */
 	public enum Can {
@@ -75,8 +77,9 @@ public class MoveLogic {
 	 * since this logic is repetitive in other methods. Any time you have logic that
 	 * seems to repeat in a lot of different places, consider making a method for
 	 * that specific logic. That way you can reduce the overall amount of code, it's
-	 * easier to read and maintain (e.g. when you make changes to that logic it's
-	 * reflected everywhere it's used).
+	 * easier to read and maintain (e.g. when you make changes to that one methods,
+	 * every other method that calls it benefits from the changes and is updated -
+	 * rather than having to change the same logic spread across multiple methods).
 	 * 
 	 * @param model
 	 * @param sourceRow
@@ -316,7 +319,7 @@ public class MoveLogic {
 	}
 
 	public static ArrayList<BoardCoordinate> getKingMoves(ChessBoardModel model, int row, int col) {
-		// TODO: Leaving for the newphews to complete.
+		// TODO: Leaving for the nephews to complete.
 		return new ArrayList<BoardCoordinate>(0);
 	}
 
@@ -520,46 +523,39 @@ public class MoveLogic {
 
 		// otherwise let's see if there's a piece between
 		// where we are and where we want to be
+
 		// if we're moving down and to the right
 		if (yDelta > 1 && xDelta > 1) {
-			for (int row = sourceRow + 1; row < targetRow; row++) {
-				for (int col = sourceCol + 1; col < targetCol; col++) {
-					if (model.getChessPiece(row, col) != null) {
-						return false;
-					}
+			for (int col = sourceCol + 1, row = sourceRow + 1; col < targetCol; col++, row++) {
+				if (model.getChessPiece(row, col) != null) {
+					return false;
 				}
 			}
 		}
 
 		// if we're moving down and to the left
 		else if (yDelta < -1 && xDelta > 1) {
-			for (int row = sourceRow + 1; row < targetRow; row++) {
-				for (int col = sourceCol - 1; col > targetCol; col--) {
-					if (model.getChessPiece(row, col) != null) {
-						return false;
-					}
+			for (int col = sourceCol - 1, row = sourceRow + 1; col > targetCol; col--, row++) {
+				if (model.getChessPiece(row, col) != null) {
+					return false;
 				}
 			}
 		}
 
 		// if we're moving up and to the right
 		else if (yDelta > 1 && xDelta < -1) {
-			for (int row = sourceRow - 1; row > targetRow; row--) {
-				for (int col = sourceCol + 1; col > targetCol; col++) {
-					if (model.getChessPiece(row, col) != null) {
-						return false;
-					}
+			for (int col = sourceCol + 1, row = sourceRow - 1; col < targetCol; col++, row--) {
+				if (model.getChessPiece(row, col) != null) {
+					return false;
 				}
 			}
 		}
 
 		// if we're moving up and to the left
 		else if (yDelta < -1 && xDelta < -1) {
-			for (int row = sourceRow - 1; row > targetRow; row--) {
-				for (int col = sourceCol - 1; col > targetCol; col--) {
-					if (model.getChessPiece(row, col) != null) {
-						return false;
-					}
+			for (int col = sourceCol - 1, row = sourceRow - 1; col > targetCol; col--, row--) {
+				if (model.getChessPiece(row, col) != null) {
+					return false;
 				}
 			}
 		}

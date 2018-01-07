@@ -14,10 +14,9 @@ public class ChessBoardController implements ChessBoardControllerINF {
 
 	/**
 	 * This method differs from the move in the model. This is where the logic
-	 * validates moves whereas the logic in the model simply updates state. It's a
-	 * bit subjective where to put the cutoff for logic in an MVC design pattern,
-	 * but generally the model is for storing state, not really business logic
-	 * outside of that.
+	 * validates moves whereas the logic in the model simply updates state. Models
+	 * can also police what their values are set to such as validate moves, but in
+	 * this case we kept the move logic external.
 	 * 
 	 * @param sourceRow
 	 * @param sourceCol
@@ -25,12 +24,10 @@ public class ChessBoardController implements ChessBoardControllerINF {
 	 * @param targetCol
 	 */
 	public void move(int sourceRow, int sourceCol, int targetRow, int targetCol) {
+		// only move a piece if it's legal
 		if (MoveLogic.canMove(model, sourceRow, sourceCol, targetRow, targetCol)) {
 			model.move(sourceRow, sourceCol, targetRow, targetCol);
 		}
-		// If they tried an illegal move we could show a window that says that, or do
-		// something else, but for now we just do nothing and wait for them to start
-		// another move.
 	}
 
 	private void showMoves(int row, int col) {
@@ -50,14 +47,13 @@ public class ChessBoardController implements ChessBoardControllerINF {
 	 * You'll see this sometimes where a controller simply passes through a method
 	 * call to the model. Because of that, some folks miss the point of the
 	 * separation of MVC components, and then they'll start just making everything a
-	 * pass through method invocation and have all the logic in the model. THat's
-	 * not quite right. Try to avoid against that. You'll notice in here there's
-	 * quite a bit of business logic that we don't necessarily want the model
-	 * knowing about, such as whether the user was actually trying to make a move or
-	 * if they were just selecting a different piece of theirs. It's arguable
-	 * whether the model should be checking if an actual move is valid though. In
-	 * this case I'm doing that in this controller. A model, however, is generally
-	 * mainly for storing state.
+	 * pass through method invocation and have all the logic in the model. That's
+	 * not quite right. Try to avoid that. You'll notice in here there's quite a bit
+	 * of business logic that we don't necessarily want the model knowing about,
+	 * such as whether the user was actually trying to make a move or if they were
+	 * just selecting a different piece of theirs. It's arguable whether the model
+	 * should be checking if an actual move is valid though. In this case I'm doing
+	 * that in this controller. A model is mainly for storing state.
 	 */
 	public void newGame() {
 		model.newGame();
@@ -127,7 +123,6 @@ public class ChessBoardController implements ChessBoardControllerINF {
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
-
 	}
 
 }

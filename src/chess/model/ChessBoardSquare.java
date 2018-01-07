@@ -2,9 +2,6 @@ package chess.model;
 
 public class ChessBoardSquare {
 
-	// In general you wouldn't have anything related to the view in the model. I'm
-	// storing this in here for showing potential moves and emphasizing decoupling
-	// of m/v/c with listeners. Some may take issue with this.
 	private boolean highlighted = false;
 
 	private ChessPiece chessPiece = null;

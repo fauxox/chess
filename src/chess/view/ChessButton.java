@@ -13,18 +13,13 @@ public class ChessButton extends JToggleButton {
 	/**
 	 * A chess button represents a square on a chess board. Different pieces may be
 	 * placed onto the button but the button itself will never move. Thus the
-	 * position information for it is final. Note we don't use x and y because all
-	 * JComponents already have x and y values used for rendering them on the
-	 * screen.
+	 * position information for it is final.
 	 * 
 	 * @param toggleAction
 	 * 
 	 * @param row
-	 *            we don't use X because that's a screen coordinate used for
-	 *            rendering JComponents
-	 * @param chessYwe
-	 *            don't use Y because that's a screen coordinate used for rendering
-	 *            JComponents
+	 * 
+	 * @param col
 	 */
 	public ChessButton(ToggleAction toggleAction, final byte row, final byte col) {
 		// Here's an example where we want the super method to do whatever it does with

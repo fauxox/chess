@@ -12,4 +12,6 @@ public interface ChessBoardModelListener {
 
 	public void chessBoardHighlightChanged(ChessBoardHighlightEvent e);
 
+	public void gameWon(boolean clr);
+
 }

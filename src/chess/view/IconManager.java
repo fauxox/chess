@@ -9,20 +9,21 @@ import javax.swing.ImageIcon;
 
 import chess.ChessProperties;
 import chess.model.ChessPiece;
+import chess.model.ChessPiece.ChessPieceType;
 
 /**
  * This serves the icons for the pieces.
  * 
  * Example of a singleton pattern. The idea is you only create one instance of
  * this class and only make static references to it. That means every other
- * instance of all objects (even if you launch multiple of these appsin the same
- * jvm) all refer to only one instance of this. The reason you might want to do
- * this is to have one authoritative source for storing some sort of global
- * state. Don't abuse that though. Probably the most common initial mistakes of
- * programmers are to make way too much globally visible to make things
- * "easier". In this case we use a Singleton to control a resource so we don't
- * create too many of them - i.e. to minimize memory footprint. Since they're
- * read only anyway everyone can just grab their icons from this class.
+ * instance of all objects (even if you launch multiple of these apps in the
+ * same jvm) all refer to only one instance of this. The reason you might want
+ * to do this is to have one authoritative source for storing some sort of
+ * global state. Don't abuse that though. Probably the most common initial
+ * mistakes of programmers are to make way too much globally visible to make
+ * things "easier". In this case we use a Singleton to control a resource so we
+ * don't create too many of them - i.e. to minimize memory footprint. Since
+ * they're read only anyway everyone can just grab their icons from this class.
  * 
  * @author John T. Langton
  *
@@ -51,20 +52,13 @@ public class IconManager {
 	}
 
 	/**
-	 * Create all of the image icons that will be used on the buttons. You usually
-	 * don't want to hard code stuff like this. Other ways to do this would be to
-	 * create a properties file, so that someone would swap in other images if they
-	 * wanted to. Since this is such a simple, small app I'll just hard code this
-	 * icon creation for now, but before we're done, if you want, we can go ahead
-	 * and change this so it's reading them in from a properties file. It's good to
-	 * know how to use properties files.
+	 * Create all of the image icons that will be used on the buttons.
 	 */
 	private void createIcons(String imagePath) {
 		BufferedImage img = null;
 		try {
 			// The path is relative to the root of the classpath (in this case the build
-			// path in the IDE). Normally the complete paths here would be specified in a
-			// properties file then loaded in at startup
+			// path in the IDE).
 			img = ImageIO.read(new File(imagePath + "black_rook.png"));
 			blackRook = new ImageIcon(img);
 			img = ImageIO.read(new File(imagePath + "white_rook.png"));
@@ -90,7 +84,7 @@ public class IconManager {
 			img = ImageIO.read(new File(imagePath + "white_pawn.png"));
 			whitePawn = new ImageIcon(img);
 		} catch (IOException e) {
-			// TODO we can talk about loggers and logging and how you might want to respod
+			// TODO we can talk about loggers and logging and how you might want to respond
 			// to different types of errors, e.g. ones that are bad but your app can keep
 			// going, vs ones that are catastrophic.
 			System.out.println(e);
@@ -142,6 +136,41 @@ public class IconManager {
 				break;
 			}
 		}
+	}
+
+	public ImageIcon getIcon(boolean isBlack, ChessPieceType type) {
+		if (isBlack) {
+			switch (type) {
+			case Rook:
+				return blackRook;
+			case Knight:
+				return blackKnight;
+			case Bishop:
+				return blackBishop;
+			case King:
+				return blackKing;
+			case Queen:
+				return blackQueen;
+			case Pawn:
+				return blackPawn;
+			}
+		} else {
+			switch (type) {
+			case Rook:
+				return whiteRook;
+			case Knight:
+				return whiteKnight;
+			case Bishop:
+				return whiteBishop;
+			case King:
+				return whiteKing;
+			case Queen:
+				return whiteQueen;
+			case Pawn:
+				return whitePawn;
+			}
+		}
+		return null;
 	}
 
 	public static IconManager getIconManager() {

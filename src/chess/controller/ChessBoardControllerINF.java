@@ -3,7 +3,7 @@ package chess.controller;
 /**
  * Sometimes you'll see some folks use a convention of appending INF to
  * interfaces and IMPL to implementations, or using some other sort of naming
- * scheme to indicate interfaces versus implementation.
+ * scheme to indicate interfaces versus implementation. Some folks hate that.
  * 
  * @author John T. Langton
  *

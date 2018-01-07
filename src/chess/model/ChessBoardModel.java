@@ -13,10 +13,10 @@ public class ChessBoardModel {
 
 	/**
 	 * This is the board. I consider the first index as the row and the second as
-	 * the col (or column). The 0,0 is top left coordinate on the board. This is
-	 * just for convenience, in reality, there is no intrinsic directionality to a
-	 * double array (i.e. you could easily have the first index as column and the
-	 * second index as row, but of course you'd have to update all of the logic for
+	 * the col (or column). 0,0 is top left coordinate on the board. This is just
+	 * for convenience. In reality, there is no intrinsic directionality to a double
+	 * array (i.e. you could easily have the first index as column and the second
+	 * index as row, but of course you'd have to update all of the logic in here for
 	 * accessing its values).
 	 */
 	private ChessBoardSquare[][] board;
@@ -25,128 +25,13 @@ public class ChessBoardModel {
 	boolean turn = true;
 
 	public ChessBoardModel() {
-		listeners = new ArrayList<ChessBoardModelListener>();
+		listeners = new ArrayList<ChessBoardModelListener>(1);
 		initBoard();
 	}
 
-	/**
-	 * There is no setter for turn; the way to change it is to call the move method.
-	 * 
-	 * @return
-	 */
-	public boolean getTurn() {
-		return turn;
-	}
-
-	public String getTurnString() {
-		if (turn) {
-			return " | Turn : Black";
-		} else {
-			return " | Turn : White";
-		}
-	}
-
-	/**
-	 * There is no checking here for whether the move is valid. This simply remove
-	 * the piece, if any, at sourceX, sourceY and places it at targetX, targetY. Any
-	 * logic for checking moves should go in a controller. This class is simply a
-	 * model for tracking state.
-	 * 
-	 * @param sourceRow
-	 * @param sourceCol
-	 * @param targetRow
-	 * @param targetCol
-	 */
-	public void move(int sourceRow, int sourceCol, int targetRow, int targetCol) {
-		setChessPiece(targetRow, targetCol, board[sourceRow][sourceCol].getChessPiece());
-		setChessPiece(sourceRow, sourceCol, null);
-		changeTurn();
-	}
-
-	private void changeTurn() {
-		turn = !turn;
-		fireTurnChanged();
-	}
-
-	public ChessPiece getChessPiece(int row, int col) {
-		return board[row][col].getChessPiece();
-	}
-
-	public void setChessPiece(int row, int col, ChessPiece piece) {
-		board[row][col].setChessPiece(piece);
-		fireChessBoardSquareChangedEvent(row, col, board[row][col]);
-	}
-
-	/**
-	 * There's no matching set ChessBoardSquare because the board is really final on
-	 * construction whereas pieces may be moved around.
-	 * 
-	 * @param row
-	 * @param col
-	 * @return
-	 */
-	public ChessBoardSquare getChessBoardSquare(int row, int col) {
-		return board[row][col];
-	}
-
-	public void clearHighlight() {
-		ArrayList<ChessBoardSquare> squares = new ArrayList<ChessBoardSquare>();
-		for (int row = 0; row < 8; row++) {
-			for (int col = 0; col < 8; col++) {
-				if (board[row][col].isHighlighted()) {
-					board[row][col].setHighlighted(false);
-					squares.add(board[row][col]);
-				}
-			}
-		}
-		fireChessBoardHighlightChangedEvent(squares);
-	}
-
-	public void setHighlight(ArrayList<BoardCoordinate> selections) {
-		ArrayList<ChessBoardSquare> squares = new ArrayList<ChessBoardSquare>();
-		for (int i = 0, n = selections.size(); i < n; i++) {
-			BoardCoordinate bc = selections.get(i);
-			int row = bc.getRow(), col = bc.getCol();
-			ChessBoardSquare square = board[row][col];
-			square.setHighlighted(true);
-			squares.add(square);
-		}
-		fireChessBoardHighlightChangedEvent(squares);
-	}
-
-	private void fireChessBoardSquareChangedEvent(int row, int col, ChessBoardSquare cbs) {
-		ChessBoardModelEvent e = new ChessBoardModelEvent(row, col, cbs);
-		for (int k = 0, n = listeners.size(); k < n; k++) {
-			listeners.get(k).chessBoardModelChanged(e);
-		}
-	}
-
-	private void fireChessBoardHighlightChangedEvent(ArrayList<ChessBoardSquare> squares) {
-		ChessBoardHighlightEvent e = new ChessBoardHighlightEvent(squares);
-		for (int k = 0, n = listeners.size(); k < n; k++) {
-			listeners.get(k).chessBoardHighlightChanged(e);
-		}
-	}
-
-	private void fireTurnChanged() {
-		String turnString = getTurnString();
-		for (int k = 0, n = listeners.size(); k < n; k++) {
-			listeners.get(k).turnChanged(turnString);
-		}
-	}
-
-	private void fireBoardReset() {
-		for (int k = 0, n = listeners.size(); k < n; k++) {
-			listeners.get(k).boardReset(this);
-		}
-	}
-
-	public void addChessBoardModelListener(ChessBoardModelListener listener) {
-		listeners.add(listener);
-	}
-
-	public boolean removeChessBoardModelListener(ChessBoardModelListener listener) {
-		return listeners.remove(listener);
+	public void newGame() {
+		initBoard();
+		fireBoardReset();
 	}
 
 	public void initBoard() {
@@ -187,9 +72,132 @@ public class ChessBoardModel {
 		turn = true;
 	}
 
-	public void newGame() {
-		initBoard();
-		fireBoardReset();
+	public boolean getTurn() {
+		return turn;
 	}
 
+	public String getTurnString() {
+		if (turn) {
+			return " | Turn : Black";
+		} else {
+			return " | Turn : White";
+		}
+	}
+
+	public ChessPiece getChessPiece(int row, int col) {
+		return board[row][col].getChessPiece();
+	}
+
+	public void setChessPiece(int row, int col, ChessPiece piece) {
+		board[row][col].setChessPiece(piece);
+		fireChessBoardSquareChangedEvent(row, col, board[row][col]);
+	}
+
+	/**
+	 * There's no matching set ChessBoardSquare because the board is really final on
+	 * construction whereas pieces may be moved around.
+	 * 
+	 * @param row
+	 * @param col
+	 * @return
+	 */
+	public ChessBoardSquare getChessBoardSquare(int row, int col) {
+		return board[row][col];
+	}
+
+	public void setHighlight(ArrayList<BoardCoordinate> selections) {
+		ArrayList<ChessBoardSquare> squares = new ArrayList<ChessBoardSquare>();
+		for (int i = 0, n = selections.size(); i < n; i++) {
+			BoardCoordinate bc = selections.get(i);
+			int row = bc.getRow(), col = bc.getCol();
+			ChessBoardSquare square = board[row][col];
+			square.setHighlighted(true);
+			squares.add(square);
+		}
+		fireChessBoardHighlightChangedEvent(squares);
+	}
+
+	public void clearHighlight() {
+		ArrayList<ChessBoardSquare> squares = new ArrayList<ChessBoardSquare>();
+		for (int row = 0; row < 8; row++) {
+			for (int col = 0; col < 8; col++) {
+				if (board[row][col].isHighlighted()) {
+					board[row][col].setHighlighted(false);
+					squares.add(board[row][col]);
+				}
+			}
+		}
+		fireChessBoardHighlightChangedEvent(squares);
+	}
+
+	/**
+	 * There is no checking here for whether the move is valid. This simply removes
+	 * the piece, if any, at sourceX, sourceY and places it at targetX, targetY. Any
+	 * logic for checking moves is elsewhere. This class is simply a model for
+	 * tracking state, which is really the main responsibility of a model. One could
+	 * argue a model should also not let it's values be set to illegal values, so in
+	 * this case you could argue it should validate moves. But that's not what I've
+	 * done here.
+	 * 
+	 * @param sourceRow
+	 * @param sourceCol
+	 * @param targetRow
+	 * @param targetCol
+	 */
+	public void move(int sourceRow, int sourceCol, int targetRow, int targetCol) {
+		ChessPiece sourcePiece = getChessPiece(sourceRow, sourceCol);
+		ChessPiece targetPiece = getChessPiece(targetRow, targetCol);
+		setChessPiece(targetRow, targetCol, sourcePiece);
+		setChessPiece(sourceRow, sourceCol, null);
+		if (targetPiece != null && targetPiece.getChessPieceType() == ChessPieceType.King) {
+			fireGameWon(sourcePiece.isBlack());
+		}
+		changeTurn();
+	}
+
+	public void addChessBoardModelListener(ChessBoardModelListener listener) {
+		listeners.add(listener);
+	}
+
+	public boolean removeChessBoardModelListener(ChessBoardModelListener listener) {
+		return listeners.remove(listener);
+	}
+
+	private void fireGameWon(boolean clr) {
+		for (int k = 0, n = listeners.size(); k < n; k++) {
+			listeners.get(k).gameWon(clr);
+		}
+	}
+
+	private void changeTurn() {
+		turn = !turn;
+		fireTurnChanged();
+	}
+
+	private void fireChessBoardSquareChangedEvent(int row, int col, ChessBoardSquare cbs) {
+		ChessBoardModelEvent e = new ChessBoardModelEvent(row, col, cbs);
+		for (int k = 0, n = listeners.size(); k < n; k++) {
+			listeners.get(k).chessBoardModelChanged(e);
+		}
+	}
+
+	private void fireChessBoardHighlightChangedEvent(ArrayList<ChessBoardSquare> squares) {
+		ChessBoardHighlightEvent e = new ChessBoardHighlightEvent(squares);
+		for (int k = 0, n = listeners.size(); k < n; k++) {
+			listeners.get(k).chessBoardHighlightChanged(e);
+		}
+	}
+
+	private void fireTurnChanged() {
+		String turnString = getTurnString();
+		for (int k = 0, n = listeners.size(); k < n; k++) {
+			listeners.get(k).turnChanged(turnString);
+		}
+	}
+
+	private void fireBoardReset() {
+		for (int k = 0, n = listeners.size(); k < n; k++) {
+			listeners.get(k).boardReset(this);
+		}
+	}
 }

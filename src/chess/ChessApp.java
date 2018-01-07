@@ -24,12 +24,13 @@ import chess.view.IconManager;
 public class ChessApp implements WindowListener {
 
 	/*
-	 * Note you can just use a Properties object, I just added a ChessProperties
-	 * subclass that only adds some constants for convenience.
+	 * Note you can just use a Properties object. I added a ChessProperties subclass
+	 * that only adds some constants for convenience.
 	 * 
 	 * In practice you can have multiple properties objects such as default
 	 * properties, and then the properties that were set by the user. This way you
-	 * can restore defaults, etc. This is a tiny app so just maintaining one.
+	 * can restore defaults, etc. You can also look at Java Preferences API, reading
+	 * environment variables, etc.
 	 */
 	private static final String defaultPropertiesPath = "resources/properties";
 

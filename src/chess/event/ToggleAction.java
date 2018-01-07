@@ -7,12 +7,8 @@ import javax.swing.AbstractAction;
 import chess.controller.ChessBoardControllerINF;
 import chess.view.ChessButton;
 
+@SuppressWarnings("serial")
 public class ToggleAction extends AbstractAction {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 
 	private ChessBoardControllerINF mover;
 
